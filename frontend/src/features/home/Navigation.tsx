@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
+import { CheckSquare } from "lucide-react";
 import type React from "react";
 import { Button } from "@/components/ui/button";
 
@@ -9,26 +9,36 @@ export const Navigation: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center">
-            <Sparkles className="h-8 w-8 text-blue-600" />
+            <CheckSquare className="h-8 w-8 text-blue-600" />
             <span className="ml-2 text-xl font-bold text-slate-900 dark:text-white">
               Blank
             </span>
           </Link>
           <div className="flex items-center space-x-4">
-            <Link to="/">
-              <Button variant="ghost" size="sm">
-                Features
-              </Button>
+            <Link
+              to="/"
+              activeProps={{
+                className: "text-blue-600 dark:text-blue-400",
+              }}
+            >
+              {({ isActive }) => (
+                <Button variant={isActive ? "default" : "ghost"} size="sm">
+                  Tasks
+                </Button>
+              )}
             </Link>
-            <Button variant="ghost" size="sm">
-              Pricing
-            </Button>
-            <Link to="/about">
-              <Button variant="ghost" size="sm">
-                About
-              </Button>
+            <Link
+              to="/about"
+              activeProps={{
+                className: "text-blue-600 dark:text-blue-400",
+              }}
+            >
+              {({ isActive }) => (
+                <Button variant={isActive ? "default" : "ghost"} size="sm">
+                  About
+                </Button>
+              )}
             </Link>
-            <Button size="sm">Get Started</Button>
           </div>
         </div>
       </div>
