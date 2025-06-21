@@ -11,6 +11,10 @@ install:
 api *ARGS:
     cd backend && uv run fastapi dev blank/api/main.py --host 0.0.0.0 --port 8101 {{ARGS}}
 
+# Generate Tanstack Router routes
+routes:
+    cd frontend && pnpm run routes
+
 # Start the frontend development server
 frontend *ARGS:
     cd frontend && pnpm dev --host 0.0.0.0 --port 5185 {{ARGS}}
@@ -27,15 +31,9 @@ openapi *HOST:
 lint:
     pre-commit run --all-files
 
-editor := env_var_or_default("EDITOR", "vim")
-
-env:
-    #!/usr/bin/env fish
-    if not test -f .env
-        echo "No .env file found, creating from template.env"
-        cp template.env .env
-    end
-    {{editor}} .env
+# Run frontend typechecking
+typecheck:
+    cd frontend && pnpm run typecheck
 
 # Generate a migration with the provided message
 migrate *ARGS:
