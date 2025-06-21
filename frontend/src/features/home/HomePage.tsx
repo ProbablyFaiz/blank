@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, Plus, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import {
@@ -14,7 +14,6 @@ import {
 } from "@/client/types.gen";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +23,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import TaskList from "@/features/home/TaskList";
 
 type FilterType = "all" | "active" | "completed";
 
@@ -36,7 +36,22 @@ const HomePage: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
   const queryClient = useQueryClient();
+
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+  } = useQuery({
+    ...listTasksOptions({
+      query: {
+        page: 1,
+        limit: 10,
+      },
+    }),
+  });
+
   const { mutate: createTask } = useMutation({
     mutationFn: (task: TaskCreate) => {
       return Default.createTask({
@@ -72,19 +87,6 @@ const HomePage: React.FC = () => {
         },
       });
     },
-  });
-
-  const {
-    data: tasks,
-    isLoading,
-    isError,
-  } = useQuery({
-    ...listTasksOptions({
-      query: {
-        page: 1,
-        limit: 10,
-      },
-    }),
   });
 
   if (isLoading) {
@@ -150,17 +152,6 @@ const HomePage: React.FC = () => {
 
     return matchesFilter && matchesSearch;
   });
-
-  const getPriorityColor = (priority: TaskPriority) => {
-    switch (priority) {
-      case TaskPriority.HIGH:
-        return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
-      case TaskPriority.MEDIUM:
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
-      case TaskPriority.LOW:
-        return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
-    }
-  };
 
   const completedCount = tasks?.items.filter((task) => task.completed).length;
   const totalCount = tasks?.items.length;
@@ -286,88 +277,12 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Tasks List */}
-        <div className="space-y-3">
-          {filteredTasks?.length === 0 ? (
-            <Card className="p-8 text-center">
-              <div className="text-slate-400 dark:text-slate-500">
-                <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="text-lg font-medium mb-2">
-                  {tasks?.items.length === 0
-                    ? "No tasks yet"
-                    : "No tasks match your filter"}
-                </p>
-                <p className="text-sm">
-                  {tasks?.items.length === 0
-                    ? "Add your first task to get started!"
-                    : "Try adjusting your search or filter"}
-                </p>
-              </div>
-            </Card>
-          ) : (
-            filteredTasks?.map((task) => (
-              <Card
-                key={task.id}
-                className="group hover:shadow-md transition-shadow"
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <button
-                      type="button"
-                      onClick={() => toggleTask(task.id, !task.completed)}
-                      className={`mt-1 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                        task.completed
-                          ? "bg-green-500 border-green-500 text-white"
-                          : "border-gray-300 hover:border-green-500"
-                      }`}
-                    >
-                      {task.completed && <CheckCircle2 className="h-3 w-3" />}
-                    </button>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3
-                          className={`font-medium ${
-                            task.completed
-                              ? "text-slate-500 line-through"
-                              : "text-slate-900 dark:text-white"
-                          }`}
-                        >
-                          {task.title}
-                        </h3>
-                        <Badge className={getPriorityColor(task.priority)}>
-                          {task.priority}
-                        </Badge>
-                      </div>
-                      {task.description && (
-                        <p
-                          className={`text-sm ${
-                            task.completed
-                              ? "text-slate-400 line-through"
-                              : "text-slate-600 dark:text-slate-300"
-                          }`}
-                        >
-                          {task.description}
-                        </p>
-                      )}
-                      <p className="text-xs text-slate-400 mt-1">
-                        Created {task.created_at.toLocaleString()}
-                      </p>
-                    </div>
-
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteTask(task.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 hover:bg-red-50"
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
+        <TaskList
+          tasks={filteredTasks || []}
+          hasAnyTasks={(tasks?.items.length ?? 0) > 0}
+          onToggleTask={toggleTask}
+          onDeleteTask={deleteTask}
+        />
       </div>
     </div>
   );
