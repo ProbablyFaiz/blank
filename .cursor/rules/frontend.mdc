@@ -1,0 +1,97 @@
+---
+description: start_web_app
+globs: frontend/**/*
+alwaysApply: false
+---
+- When using React, we use Typescript and typically build most UI elements with React Bootstrap-based functional components.
+    - Please use React Bootstrap components where available instead of their plain Bootstrap CSS class equivalents. When asked to use icons, use icons from react-bootstrap-icons.
+- When designing UI, you should build components (and create/edit CSS files as necessary) that are aesthetically pleasing, modern in design, and consistent with the app's existing conventions.
+
+## API Client Usage (React Query)
+
+- Our API client is auto-generated and provides TanStack Query (React Query) integration:
+  - Import types from `@/client` (e.g., `import { TaskListItem } from "@/client"`)
+  - Import services like `DefaultService` from `@/client`
+  - Import query options from `@/client/@tanstack/react-query.gen`
+
+- API endpoint naming convention follows these patterns:
+  - GET endpoints for single items generate `readXOptions` functions (e.g., `readTaskOptions`)
+  - GET endpoints for paginated lists generate `listXOptions` functions (e.g., `listTaskRunPredictionsOptions`)
+    - By convention, list endpoints should return a paginated object using the PaginatedBase generic in backend/start/api/interfaces.py. Here is an example:
+```python
+@router.get(
+    "/tasks", response_model=PaginatedBase[TaskListItem], operation_id="listTasks"
+)
+def list_tasks(
+    db: Annotated[Session, Depends(get_db)],
+    project_id: int | None = None,
+    search: Annotated[str, Query()] | None = None,
+    page: Annotated[int, Query(ge=1)] = 1,
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+):
+    query = (
+        # omitted
+    )
+
+    if project_id is not None:
+        ...  # omitted
+
+    if search is not None:
+        ...  # omitted
+
+
+    query = (
+       ...  # omitted
+    )
+    tasks = db.execute(query).scalars().all()
+
+    return PaginatedBase(
+        items=tasks,
+        total=total,
+        page=page,
+        size=limit,
+    )
+```
+  - Query keys are available as `getXQueryKey` and `listXQueryKey` functions
+
+- When using the client with React Query:
+  - For read operations, spread the options from the generated functions:
+    ```typescript
+    const { data } = useQuery({
+      ...readTaskOptions({ path: { task_id: taskId } }),
+    });
+    ```
+  - For mutations, use the service directly:
+    ```typescript
+    const mutation = useMutation({
+      mutationFn: (taskId: number) =>
+        DefaultService.archiveTask({ path: { task_id: taskId } }),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getTasksQueryKey() });
+      },
+    });
+    ```
+
+- When implementing pagination:
+  - Use the `PaginationControl` component from `@/components` (`import PaginationControl from "@/components/PaginationControl"`):
+```typescript
+interface PaginationControlProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  onPageHover?: (page: number) => void;
+}
+```
+  - Implement prefetching on hover for pagination items using `onPageHover`
+  - Use `keepPreviousData` option with paginated queries for smoother transitions:
+    ```typescript
+    const { data } = useQuery({
+      ...listSomethingOptions({ query: { page: currentPage, limit: pageSize } }),
+      placeholderData: keepPreviousData,
+    });
+    ```
+
+- Performance best practices:
+  - Implement prefetching when hovering over list items
+  - Always invalidate queries after mutations that affect the data
+  - For heavily nested components, consider using QueryClient directly for prefetching

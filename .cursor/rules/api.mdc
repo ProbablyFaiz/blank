@@ -1,0 +1,9 @@
+---
+description: start_api
+globs: backend/start/api/**/*
+alwaysApply: false
+---
+- For FastAPI apps:
+   - By convention, all endpoints should be decorated with the response_model and an operation ID (in camel case, e.g. `listEvalIssues`). GET endpoints which return lists/paginated lists should be named as list{plural object in camel case}, for single objects, `read{singular object in camel case}`, e.g. `readEvalIssue`.
+   - When declaring endpoint dependencies, use the Annotated syntax, e.g., `db: Annotated[Session, Depends(get_db)]`, NOT the `= Depends(get_db)` default argument syntax.
+   - Words in urls should be separated by underscores, not dashes. E.g. `issue_histories` not `issue-histories`.

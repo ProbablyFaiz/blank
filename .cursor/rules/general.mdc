@@ -1,0 +1,25 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+## Commands
+- Run all tests: `cd backend && pytest`
+- Run frontend typechecking: `just typecheck`
+- Run pytest tests: `just pytest`
+- Run single test: `cd backend && uv run pytest test/path/to/test_file.py::TestClass::test_function -v`
+- Format code: `just lint`
+  - Often helpful to run this after making large code changes.
+- Generate OpenAPI client: `just openapi` (regenerates frontend/src/client from running API)
+- Generate (but do not run) DB migrations based on changes to backend/start/db/models.py: `just migrate "message"` (auto-generate)
+    - Please use `just migrate` and then modify the alembic migration as necessary, do not try to create one from scratch manually.
+    - Remember when creating migrations for non-nullable columns that if they are for an existing table, you will probably need to
+    modify the migration to first create the column as nullable, initialize the column's values appropriately, and then set it to
+    non-nullable.
+
+Note that, as shown, to run code in the backend Python environment, one must run `uv run <your python command>`
+inside the `backend/` directory. The `just` shortcuts handle this for you when they are available.
+
+YOU ARE ABSOLUTELY PROHIBITED FROM EXECUTING THE MIGRATION YOU HAVE GENERATED YOURSELF. DO NOT RUN `just migrate-up` OR
+`alembic upgrade ...` or `alembic downgrade ...` UNDER ANY CIRCUMSTANCES. IF RUNNING A MIGRATION IS NECESSARY FOR THE
+CONTINUATION OF WORK, ASK THE USER TO PERFORM IT.
