@@ -1,9 +1,11 @@
 from logging.config import fileConfig
 
 from alembic import context
+from alembic_utils.replaceable_entity import register_entities
 
 from blank.db.models import Base
-from blank.db.session import get_engine
+from blank.db.pg_objects import PG_OBJECTS
+from blank.db.session import ADMIN_POSTGRES_URI, get_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -18,10 +20,24 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 target_metadata = Base.metadata
 
+# Register the entities with alembic_utils
+register_entities(
+    [
+        *PG_OBJECTS,
+    ]
+)
+
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
+def include_object(obj, name, obj_type, reflected, compare_to):
+    if obj_type == "table" and name.startswith("celery"):
+        return False
+    if obj_type == "grant_table":
+        return False
+    return True
 
 
 def run_migrations_offline() -> None:
@@ -46,8 +62,13 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    with get_engine().connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+
+    with get_engine(ADMIN_POSTGRES_URI).connect() as connection:
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            include_object=include_object,
+        )
 
         with context.begin_transaction():
             context.run_migrations()
