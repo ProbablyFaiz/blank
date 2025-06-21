@@ -30,7 +30,7 @@ export const Footer: React.FC = () => {
           </div>
           <Separator className="my-6" />
           <div className="text-center text-slate-500 dark:text-slate-400">
-            <p>&copy; 2024 Blank. Built with ❤️ using shadcn/ui and React.</p>
+            <p>&copy; 2024 Blank</p>
           </div>
         </div>
       </footer>

@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "openapi": "openapi-ts"
+    "openapi": "openapi-ts",
+    "routes": "tsr generate"
   },
   "dependencies": {
     "@hey-api/openapi-ts": "^0.74.0",
@@ -18,6 +19,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@tailwindcss/vite": "^4.1.10",
     "@tanstack/react-query": "^5.80.10",
+    "@tanstack/react-router": "^1.121.27",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -28,6 +30,7 @@
     "tailwindcss": "^4.1.10"
   },
   "devDependencies": {
+    "@tanstack/router-cli": "^1.121.27",
     "@types/node": "^22.15.32",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
