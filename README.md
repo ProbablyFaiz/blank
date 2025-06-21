@@ -9,6 +9,8 @@ A full-stack template with a React frontend and FastAPI backend.
 - [TanStack Router](https://tanstack.com/router/latest/docs/framework/react/overview) for routing
 - [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS](https://tailwindcss.com/) for styling
 - [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) for API state management
+- [openapi-ts](https://github.com/hey-api/openapi-ts) for API client generation
+  - Word for the wise: upgrade with extreme caution. It seems like every release has significant breaking changes.
 
 **Backend:**
 - [FastAPI](https://fastapi.tiangolo.com/) with async/await support
@@ -21,6 +23,10 @@ A full-stack template with a React frontend and FastAPI backend.
 - [pnpm](https://pnpm.io/) for frontend package management
 - [uv](https://docs.astral.sh/uv/) for Python dependency management
 - **Code Quality**: Pre-commit hooks with [Ruff](https://github.com/astral-sh/ruff) (Python) and [Biome](https://biomejs.dev/) (TypeScript/JavaScript)
+
+**Production Deployment:**
+- Docker/Docker Compose for building and running the application
+- Cloudflare Tunnel acts as a reverse proxy for the application to expose it to the internet
 
 ## Prerequisites
 
