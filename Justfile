@@ -11,10 +11,6 @@ install:
 api *ARGS:
     cd backend && uv run fastapi dev blank/api/main.py --host 0.0.0.0 --port 8101 {{ARGS}}
 
-# Generate Tanstack Router routes
-routes:
-    cd frontend && pnpm run routes
-
 # Start the frontend development server
 frontend *ARGS:
     cd frontend && pnpm dev --host 0.0.0.0 --port 5185 {{ARGS}}

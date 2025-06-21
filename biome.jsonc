@@ -16,7 +16,7 @@
     },
     "includes": [
       "frontend/**/*",
-      "!frontend/src/client/**/*",
+      "!frontend/src/**/*.gen.ts",
       "!frontend/node_modules/**/*"
     ]
   },

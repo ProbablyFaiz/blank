@@ -8,13 +8,13 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "openapi": "openapi-ts",
-    "routes": "tsr generate",
     "format": "biome format",
     "lint": "biome check .",
     "typecheck": "tsc -b"
   },
   "dependencies": {
-    "@hey-api/openapi-ts": "^0.74.0",
+    "@hey-api/client-axios": "^0.9.1",
+    "@hey-api/openapi-ts": "^0.72.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-dialog": "^1.1.14",
     "@radix-ui/react-separator": "^1.1.7",
@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.4",
-    "@tanstack/router-cli": "^1.121.27",
+    "@tanstack/router-plugin": "^1.121.29",
     "@types/node": "^22.15.32",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",

@@ -97,7 +97,6 @@ Your app will be available at:
 ### Development
 - `just api` - Start FastAPI backend server
 - `just frontend` - Start React development server
-- `just routes` - Regenerate TanStack Router routes
 - `just openapi` - Regenerate API client from backend OpenAPI spec
 - `just shadcn-add <component>` - Add a shadcn/ui component; equivalent to `pnpm dlx shadcn@latest add <component>`
 

@@ -12,8 +12,15 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const API_BASE_URL = import.meta.env.VITE_BLANK_API_URL;
+
+if (!API_BASE_URL) {
+  throw new Error("VITE_BLANK_API_URL is not set");
+}
+
 client.setConfig({
-  baseURL: import.meta.env.VITE_BLANK_API_URL || "http://localhost:8101",
+  baseURL: API_BASE_URL,
 });
 
 createRoot(document.getElementById("root")!).render(
