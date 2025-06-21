@@ -21,10 +21,3 @@ repos:
         additional_dependencies: ["@biomejs/biome@1.8.3"]
       - id: biome-format
         additional_dependencies: ["@biomejs/biome@1.8.3"]
-  - repo: local
-    hooks:
-      - id: add-ts-nocheck
-        name: Add @ts-nocheck
-        entry: python scripts/add_ts_nocheck.py
-        language: python
-        files: ^frontend/src/client/@tanstack/react-query\.gen\.ts$

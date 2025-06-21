@@ -1,19 +1,17 @@
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from blank.api.deps import get_db, get_proxy_pattern
 from blank.api.interfaces import (
     ProxyPatternCreate,
     ProxyPatternRead,
     ProxyPatternUpdate,
 )
-from blank.db.models import (
-    ProxyPattern,
-)
-from blank.db.session import new_session
+from blank.db.models import ProxyPattern
 
 app = FastAPI()
 app.add_middleware(
@@ -23,29 +21,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-# region Dependencies
-
-
-def get_db() -> Session:
-    session = new_session()
-    try:
-        yield session
-    finally:
-        session.close()
-
-
-def get_proxy_pattern(
-    db: Annotated[Session, Depends(get_db)], pattern_id: int
-) -> ProxyPattern:
-    proxy_pattern = db.get(ProxyPattern, pattern_id)
-    if not proxy_pattern:
-        raise HTTPException(status_code=404, detail="Proxy pattern not found")
-    return proxy_pattern
-
-
-# endregion
 
 
 @app.get(
