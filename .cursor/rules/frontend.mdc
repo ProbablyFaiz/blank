@@ -3,9 +3,10 @@ description: start_web_app
 globs: frontend/**/*
 alwaysApply: false
 ---
-- When using React, we use Typescript and typically build most UI elements with React Bootstrap-based functional components.
-    - Please use React Bootstrap components where available instead of their plain Bootstrap CSS class equivalents. When asked to use icons, use icons from react-bootstrap-icons.
-- When designing UI, you should build components (and create/edit CSS files as necessary) that are aesthetically pleasing, modern in design, and consistent with the app's existing conventions.
+- When using React, we use Typescript and typically build most UI elements with Tailwind/shadcn
+    - Please use shadcn components where available or installable. When asked to use icons, use Lucide icons.
+- When designing UI, you should build components that are aesthetically pleasing, modern in design, and consistent with the app's existing conventions.
+- Generally speaking, import project files relative to the src directory using the `@/` alias, e.g. `@/features/home/CTA.tsx`
 
 ## API Client Usage (React Query)
 
@@ -52,7 +53,7 @@ def list_tasks(
         size=limit,
     )
 ```
-  - Query keys are available as `getXQueryKey` and `listXQueryKey` functions
+  - Query keys are available as `readXQueryKey` and `listXQueryKey` functions with the same arguments as the `readXOptions` functions.
 
 - When using the client with React Query:
   - For read operations, spread the options from the generated functions:
@@ -61,6 +62,7 @@ def list_tasks(
       ...readTaskOptions({ path: { task_id: taskId } }),
     });
     ```
+        - Note that useQuery does not have `onSuccess` or `onError` callbacks. To take actions on success and failure, you must use `useEffect` as is typical in React.
   - For mutations, use the service directly:
     ```typescript
     const mutation = useMutation({
@@ -93,5 +95,5 @@ interface PaginationControlProps {
 
 - Performance best practices:
   - Implement prefetching when hovering over list items
-  - Always invalidate queries after mutations that affect the data
+  - Always invalidate related queries after mutations that affect the data
   - For heavily nested components, consider using QueryClient directly for prefetching

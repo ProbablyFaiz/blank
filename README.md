@@ -2,40 +2,16 @@
 
 A full-stack template with a React frontend and FastAPI backend.
 
-## Tech Stack
 
-**Frontend:**
-- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vite.dev/)
-- [TanStack Router](https://tanstack.com/router/latest/docs/framework/react/overview) for routing
-- [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS](https://tailwindcss.com/) for styling
-- [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) for API state management
-- [openapi-ts](https://github.com/hey-api/openapi-ts) for API client generation
-  - Word for the wise: upgrade with extreme caution. It seems like every release has significant breaking changes.
-
-**Backend:**
-- [FastAPI](https://fastapi.tiangolo.com/) with async/await support
-- [SQLAlchemy](https://www.sqlalchemy.org/) 2.x ORM + [Alembic](https://alembic.sqlalchemy.org/en/latest/) migrations
-- [PostgreSQL](https://www.postgresql.org/) database
-- [Pydantic](https://docs.pydantic.dev/) 2.x for data validation
-
-**Tools:**
-- [just](https://github.com/casey/just) for task automation
-- [pnpm](https://pnpm.io/) for frontend package management
-- [uv](https://docs.astral.sh/uv/) for Python dependency management
-- **Code Quality**: Pre-commit hooks with [Ruff](https://github.com/astral-sh/ruff) (Python) and [Biome](https://biomejs.dev/) (TypeScript/JavaScript)
-
-**Production Deployment:**
-- Docker/Docker Compose for building and running the application
-- Cloudflare Tunnel acts as a reverse proxy for the application to expose it to the internet
 
 ## Prerequisites
 
-- **Python 3.11+**
-- **Node.js 18+**
 - **uv** (`curl -LsSf https://astral.sh/uv/install.sh | sh`)
-- **pnpm** (`npm install -g pnpm`)
 - **just** task runner (`uv tool install rust-just`)
+- **Node.js 18+**
+- **pnpm** (`npm install -g pnpm`)
 - **PostgreSQL**
+- **Redis**
 
 For deployment:
 - **Docker**/**Docker Compose**
@@ -104,7 +80,7 @@ Your app will be available at:
 - `just api` - Start FastAPI backend server
 - `just frontend` - Start React development server
 - `just openapi` - Regenerate API client from backend OpenAPI spec
-- `just shadcn-add <component>` - Add a shadcn/ui component; equivalent to `pnpm dlx shadcn@latest add <component>`
+- `just shadd <component>` - Add a shadcn/ui component; equivalent to `pnpm dlx shadcn@latest add <component>`
 
 ### Building & Quality
 - `just build` - Build frontend for production
@@ -140,9 +116,28 @@ Your app will be available at:
 
 **Note on Authentication:** This template doesn't include authentication by default. For production apps, we recommend Auth0 with `fastapi-auth0` (backend) and `@auth0/auth0-react` (frontend).
 
-## Development Tips
+## Tech Stack
 
-- **Database changes**: Always create migrations with `just migrate "description"`
-- **Code quality**: Run `just lint` before committing
+**Frontend:**
+- [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vite.dev/)
+- [TanStack Router](https://tanstack.com/router/latest/docs/framework/react/overview) for routing
+- [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS](https://tailwindcss.com/) for styling
+- [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) for API state management
+- [openapi-ts](https://github.com/hey-api/openapi-ts) for API client generation
+  - Word for the wise: upgrade with extreme caution. It seems like every release has significant breaking changes.
 
-Happy coding! 🚀
+**Backend:**
+- [FastAPI](https://fastapi.tiangolo.com/) with async/await support
+- [SQLAlchemy](https://www.sqlalchemy.org/) 2.x ORM + [Alembic](https://alembic.sqlalchemy.org/en/latest/) migrations
+- [PostgreSQL](https://www.postgresql.org/) database
+- [Pydantic](https://docs.pydantic.dev/) 2.x for data validation
+
+**Tools:**
+- [just](https://github.com/casey/just) for task automation
+- [pnpm](https://pnpm.io/) for frontend package management
+- [uv](https://docs.astral.sh/uv/) for Python dependency management
+- **Code Quality**: Pre-commit hooks with [Ruff](https://github.com/astral-sh/ruff) (Python) and [Biome](https://biomejs.dev/) (TypeScript/JavaScript)
+
+**Production Deployment:**
+- Docker/Docker Compose for building and running the application
+- Cloudflare Tunnel acts as a reverse proxy for the application to expose it to the internet
