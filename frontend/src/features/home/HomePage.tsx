@@ -1,6 +1,17 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Plus, Search } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import {
+  listTasksOptions,
+  listTasksQueryKey,
+} from "@/client/@tanstack/react-query.gen";
+import { Default } from "@/client/sdk.gen";
+import {
+  type TaskCreate,
+  TaskPriority,
+  type TaskUpdate,
+} from "@/client/types.gen";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,82 +24,121 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-
-interface Task {
-  id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-  priority: "low" | "medium" | "high";
-  createdAt: Date;
-}
 
 type FilterType = "all" | "active" | "completed";
 
 const HomePage: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskDescription, setNewTaskDescription] = useState("");
-  const [newTaskPriority, setNewTaskPriority] =
-    useState<Task["priority"]>("medium");
+  const [newTaskPriority, setNewTaskPriority] = useState<TaskPriority>(
+    TaskPriority.MEDIUM,
+  );
   const [filter, setFilter] = useState<FilterType>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const { mutate: createTask } = useMutation({
+    mutationFn: (task: TaskCreate) => {
+      return Default.createTask({
+        body: task,
+      });
+    },
+  });
 
-  // Load tasks from localStorage on mount
-  useEffect(() => {
-    const savedTasks = localStorage.getItem("tasks");
-    if (savedTasks) {
-      const parsedTasks = JSON.parse(savedTasks).map((task: any) => ({
-        ...task,
-        createdAt: new Date(task.createdAt),
-      }));
-      setTasks(parsedTasks);
-    }
-  }, []);
+  const { mutate: updateTask } = useMutation({
+    mutationFn: ({
+      id,
+      taskUpdate,
+    }: {
+      id: number;
+      taskUpdate: TaskUpdate;
+    }) => {
+      return Default.updateTask({
+        body: {
+          ...taskUpdate,
+        },
+        path: {
+          task_id: id,
+        },
+      });
+    },
+  });
 
-  // Save tasks to localStorage whenever tasks change
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
+  const { mutate: deleteTaskMutation } = useMutation({
+    mutationFn: (id: number) => {
+      return Default.deleteTask({
+        path: {
+          task_id: id,
+        },
+      });
+    },
+  });
+
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+  } = useQuery({
+    ...listTasksOptions({
+      query: {
+        page: 1,
+        limit: 10,
+      },
+    }),
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading tasks</div>;
+  }
 
   const addTask = () => {
     if (!newTaskTitle.trim()) return;
 
-    const newTask: Task = {
-      id: Date.now().toString(),
+    const newTask: TaskCreate = {
       title: newTaskTitle.trim(),
-      description: newTaskDescription.trim() || undefined,
-      completed: false,
+      description: newTaskDescription.trim() || null,
       priority: newTaskPriority,
-      createdAt: new Date(),
     };
-
-    setTasks([newTask, ...tasks]);
-    setNewTaskTitle("");
-    setNewTaskDescription("");
-    setNewTaskPriority("medium");
-    setIsAddDialogOpen(false);
+    createTask(newTask, {
+      onSuccess: () => {
+        setNewTaskTitle("");
+        setNewTaskDescription("");
+        setNewTaskPriority(TaskPriority.MEDIUM);
+        setIsAddDialogOpen(false);
+        queryClient.invalidateQueries({ queryKey: listTasksQueryKey() });
+      },
+    });
   };
 
-  const toggleTask = (id: string) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === id ? { ...task, completed: !task.completed } : task,
-      ),
+  const toggleTask = (id: number, completed: boolean) => {
+    updateTask(
+      {
+        id,
+        taskUpdate: {
+          completed,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: listTasksQueryKey() });
+        },
+      },
     );
   };
 
-  const deleteTask = (id: string) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+  const deleteTask = (id: number) => {
+    deleteTaskMutation(id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: listTasksQueryKey() });
+      },
+    });
   };
 
-  const clearCompleted = () => {
-    setTasks(tasks.filter((task) => !task.completed));
-  };
-
-  const filteredTasks = tasks.filter((task) => {
+  const filteredTasks = tasks?.items.filter((task) => {
     const matchesFilter =
       filter === "all" ||
       (filter === "active" && !task.completed) ||
@@ -101,19 +151,19 @@ const HomePage: React.FC = () => {
     return matchesFilter && matchesSearch;
   });
 
-  const getPriorityColor = (priority: Task["priority"]) => {
+  const getPriorityColor = (priority: TaskPriority) => {
     switch (priority) {
-      case "high":
+      case TaskPriority.HIGH:
         return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400";
-      case "medium":
+      case TaskPriority.MEDIUM:
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400";
-      case "low":
+      case TaskPriority.LOW:
         return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400";
     }
   };
 
-  const completedCount = tasks.filter((task) => task.completed).length;
-  const totalCount = tasks.length;
+  const completedCount = tasks?.items.filter((task) => task.completed).length;
+  const totalCount = tasks?.items.length;
 
   return (
     <div className="py-8 px-4 sm:px-6 lg:px-8">
@@ -126,12 +176,12 @@ const HomePage: React.FC = () => {
           <p className="text-lg text-slate-600 dark:text-slate-300">
             Stay organized and get things done
           </p>
-          {totalCount > 0 && (
+          {totalCount && totalCount > 0 && (
             <div className="flex justify-center gap-2 mt-4">
               <Badge variant="outline">{totalCount} total</Badge>
               <Badge variant="outline">{completedCount} completed</Badge>
               <Badge variant="outline">
-                {totalCount - completedCount} remaining
+                {totalCount - (completedCount ?? 0)} remaining
               </Badge>
             </div>
           )}
@@ -206,7 +256,7 @@ const HomePage: React.FC = () => {
                   <select
                     value={newTaskPriority}
                     onChange={(e) =>
-                      setNewTaskPriority(e.target.value as Task["priority"])
+                      setNewTaskPriority(e.target.value as TaskPriority)
                     }
                     className="w-full p-2 border rounded-md dark:bg-slate-800 dark:border-slate-600"
                   >
@@ -237,24 +287,24 @@ const HomePage: React.FC = () => {
 
         {/* Tasks List */}
         <div className="space-y-3">
-          {filteredTasks.length === 0 ? (
+          {filteredTasks?.length === 0 ? (
             <Card className="p-8 text-center">
               <div className="text-slate-400 dark:text-slate-500">
                 <CheckCircle2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p className="text-lg font-medium mb-2">
-                  {tasks.length === 0
+                  {tasks?.items.length === 0
                     ? "No tasks yet"
                     : "No tasks match your filter"}
                 </p>
                 <p className="text-sm">
-                  {tasks.length === 0
+                  {tasks?.items.length === 0
                     ? "Add your first task to get started!"
                     : "Try adjusting your search or filter"}
                 </p>
               </div>
             </Card>
           ) : (
-            filteredTasks.map((task) => (
+            filteredTasks?.map((task) => (
               <Card
                 key={task.id}
                 className="group hover:shadow-md transition-shadow"
@@ -263,7 +313,7 @@ const HomePage: React.FC = () => {
                   <div className="flex items-start gap-3">
                     <button
                       type="button"
-                      onClick={() => toggleTask(task.id)}
+                      onClick={() => toggleTask(task.id, !task.completed)}
                       className={`mt-1 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-colors ${
                         task.completed
                           ? "bg-green-500 border-green-500 text-white"
@@ -300,7 +350,7 @@ const HomePage: React.FC = () => {
                         </p>
                       )}
                       <p className="text-xs text-slate-400 mt-1">
-                        Created {task.createdAt.toLocaleDateString()}
+                        Created {task.created_at.toLocaleString()}
                       </p>
                     </div>
 
@@ -318,21 +368,6 @@ const HomePage: React.FC = () => {
             ))
           )}
         </div>
-
-        {/* Footer Actions */}
-        {completedCount > 0 && (
-          <div className="mt-6 text-center">
-            <Separator className="mb-4" />
-            <Button
-              variant="outline"
-              onClick={clearCompleted}
-              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-            >
-              Clear {completedCount} Completed Task
-              {completedCount !== 1 ? "s" : ""}
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );

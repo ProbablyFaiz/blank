@@ -2,8 +2,8 @@
 
 import type { Client, Options as ClientOptions, TDataShape } from '@hey-api/client-axios';
 import { client as _heyApiClient } from './client.gen';
-import { createProxyPatternResponseTransformer, readProxyPatternResponseTransformer, updateProxyPatternResponseTransformer } from './transformers.gen';
-import type { CreateProxyPatternData, CreateProxyPatternErrors, CreateProxyPatternResponses, DeleteProxyPatternData, DeleteProxyPatternErrors, DeleteProxyPatternResponses, ListProxyPatternsData, ListProxyPatternsErrors, ListProxyPatternsResponses, ReadProxyPatternData, ReadProxyPatternErrors, ReadProxyPatternResponses, UpdateProxyPatternData, UpdateProxyPatternErrors, UpdateProxyPatternResponses } from './types.gen';
+import { createTaskResponseTransformer, listTasksResponseTransformer, readTaskResponseTransformer, updateTaskResponseTransformer } from './transformers.gen';
+import type { CreateTaskData, CreateTaskErrors, CreateTaskResponses, DeleteTaskData, DeleteTaskErrors, DeleteTaskResponses, ListTasksData, ListTasksErrors, ListTasksResponses, ReadTaskData, ReadTaskErrors, ReadTaskResponses, UpdateTaskData, UpdateTaskErrors, UpdateTaskResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = ClientOptions<TData, ThrowOnError> & {
     /**
@@ -21,24 +21,25 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 
 export class Default {
     /**
-     * List Proxy Patterns
+     * List Tasks
      */
-    public static listProxyPatterns<ThrowOnError extends boolean = false>(options?: Options<ListProxyPatternsData, ThrowOnError>) {
-        return (options?.client ?? _heyApiClient).get<ListProxyPatternsResponses, ListProxyPatternsErrors, ThrowOnError>({
+    public static listTasks<ThrowOnError extends boolean = false>(options?: Options<ListTasksData, ThrowOnError>) {
+        return (options?.client ?? _heyApiClient).get<ListTasksResponses, ListTasksErrors, ThrowOnError>({
             responseType: 'json',
-            url: '/proxy_patterns',
+            responseTransformer: listTasksResponseTransformer,
+            url: '/tasks',
             ...options
         });
     }
 
     /**
-     * Create Proxy Pattern
+     * Create Task
      */
-    public static createProxyPattern<ThrowOnError extends boolean = false>(options: Options<CreateProxyPatternData, ThrowOnError>) {
-        return (options.client ?? _heyApiClient).post<CreateProxyPatternResponses, CreateProxyPatternErrors, ThrowOnError>({
+    public static createTask<ThrowOnError extends boolean = false>(options: Options<CreateTaskData, ThrowOnError>) {
+        return (options.client ?? _heyApiClient).post<CreateTaskResponses, CreateTaskErrors, ThrowOnError>({
             responseType: 'json',
-            responseTransformer: createProxyPatternResponseTransformer,
-            url: '/proxy_patterns',
+            responseTransformer: createTaskResponseTransformer,
+            url: '/tasks',
             ...options,
             headers: {
                 'Content-Type': 'application/json',
@@ -48,35 +49,35 @@ export class Default {
     }
 
     /**
-     * Delete Proxy Pattern
+     * Delete Task
      */
-    public static deleteProxyPattern<ThrowOnError extends boolean = false>(options: Options<DeleteProxyPatternData, ThrowOnError>) {
-        return (options.client ?? _heyApiClient).delete<DeleteProxyPatternResponses, DeleteProxyPatternErrors, ThrowOnError>({
-            url: '/proxy_patterns/{pattern_id}',
+    public static deleteTask<ThrowOnError extends boolean = false>(options: Options<DeleteTaskData, ThrowOnError>) {
+        return (options.client ?? _heyApiClient).delete<DeleteTaskResponses, DeleteTaskErrors, ThrowOnError>({
+            url: '/tasks/{task_id}',
             ...options
         });
     }
 
     /**
-     * Read Proxy Pattern
+     * Read Task
      */
-    public static readProxyPattern<ThrowOnError extends boolean = false>(options: Options<ReadProxyPatternData, ThrowOnError>) {
-        return (options.client ?? _heyApiClient).get<ReadProxyPatternResponses, ReadProxyPatternErrors, ThrowOnError>({
+    public static readTask<ThrowOnError extends boolean = false>(options: Options<ReadTaskData, ThrowOnError>) {
+        return (options.client ?? _heyApiClient).get<ReadTaskResponses, ReadTaskErrors, ThrowOnError>({
             responseType: 'json',
-            responseTransformer: readProxyPatternResponseTransformer,
-            url: '/proxy_patterns/{pattern_id}',
+            responseTransformer: readTaskResponseTransformer,
+            url: '/tasks/{task_id}',
             ...options
         });
     }
 
     /**
-     * Update Proxy Pattern
+     * Update Task
      */
-    public static updateProxyPattern<ThrowOnError extends boolean = false>(options: Options<UpdateProxyPatternData, ThrowOnError>) {
-        return (options.client ?? _heyApiClient).patch<UpdateProxyPatternResponses, UpdateProxyPatternErrors, ThrowOnError>({
+    public static updateTask<ThrowOnError extends boolean = false>(options: Options<UpdateTaskData, ThrowOnError>) {
+        return (options.client ?? _heyApiClient).patch<UpdateTaskResponses, UpdateTaskErrors, ThrowOnError>({
             responseType: 'json',
-            responseTransformer: updateProxyPatternResponseTransformer,
-            url: '/proxy_patterns/{pattern_id}',
+            responseTransformer: updateTaskResponseTransformer,
+            url: '/tasks/{task_id}',
             ...options,
             headers: {
                 'Content-Type': 'application/json',

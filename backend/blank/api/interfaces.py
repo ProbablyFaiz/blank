@@ -4,7 +4,7 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, computed_field
 
-from blank.db.models import PatternType
+from blank.db.models import TaskPriority
 
 
 class ApiModel(BaseModel):
@@ -29,27 +29,32 @@ class PaginatedBase(ApiModel, Generic[DataT]):
         return math.ceil(self.total / self.size) if self.size > 0 else 0
 
 
-class ProxyPatternCreate(ApiModel):
-    pattern: str
-    enabled: bool = True
+class TaskCreate(ApiModel):
+    title: str
+    description: str | None = None
+    priority: TaskPriority = TaskPriority.MEDIUM
 
 
-class ProxyPatternBase(ApiModel):
+class TaskBase(ApiModel):
     id: int
-    enabled: bool
-    pattern_type: PatternType
-
-
-class ProxyPatternRead(ProxyPatternBase):
-    pattern: str
+    title: str
+    completed: bool
+    priority: TaskPriority
+    description: str | None
     created_at: datetime
     updated_at: datetime
 
 
-class ProxyPatternItem(ProxyPatternBase):
+class TaskRead(TaskBase):
     pass
 
 
-class ProxyPatternUpdate(ApiModel):
-    pattern: str | None = None
-    enabled: bool | None = None
+class TaskListItem(TaskBase):
+    pass
+
+
+class TaskUpdate(ApiModel):
+    title: str | None = None
+    description: str | None = None
+    completed: bool | None = None
+    priority: TaskPriority | None = None

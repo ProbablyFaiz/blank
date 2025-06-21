@@ -4,7 +4,7 @@ import { type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutation
 import type { AxiosError } from 'axios';
 import { client as _heyApiClient } from '../client.gen';
 import { Default, type Options } from '../sdk.gen';
-import type { CreateProxyPatternData, CreateProxyPatternError, CreateProxyPatternResponse, DeleteProxyPatternData, DeleteProxyPatternError, DeleteProxyPatternResponse, ListProxyPatternsData, ListProxyPatternsError, ListProxyPatternsResponse, ReadProxyPatternData, UpdateProxyPatternData, UpdateProxyPatternError, UpdateProxyPatternResponse } from '../types.gen';
+import type { CreateTaskData, CreateTaskError, CreateTaskResponse, DeleteTaskData, DeleteTaskError, DeleteTaskResponse, ListTasksData, ListTasksError, ListTasksResponse, ReadTaskData, UpdateTaskData, UpdateTaskError, UpdateTaskResponse } from '../types.gen';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseURL' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -37,15 +37,15 @@ const createQueryKey = <TOptions extends Options>(id: string, options?: TOptions
     ];
 };
 
-export const listProxyPatternsQueryKey = (options?: Options<ListProxyPatternsData>) => createQueryKey('listProxyPatterns', options);
+export const listTasksQueryKey = (options?: Options<ListTasksData>) => createQueryKey('listTasks', options);
 
 /**
- * List Proxy Patterns
+ * List Tasks
  */
-export const listProxyPatternsOptions = (options?: Options<ListProxyPatternsData>) => {
+export const listTasksOptions = (options?: Options<ListTasksData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await Default.listProxyPatterns({
+            const { data } = await Default.listTasks({
                 ...options,
                 ...queryKey[0],
                 signal,
@@ -53,7 +53,7 @@ export const listProxyPatternsOptions = (options?: Options<ListProxyPatternsData
             });
             return data;
         },
-        queryKey: listProxyPatternsQueryKey(options)
+        queryKey: listTasksQueryKey(options)
     });
 };
 
@@ -88,24 +88,24 @@ const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'hea
     return params as unknown as typeof page;
 };
 
-export const listProxyPatternsInfiniteQueryKey = (options?: Options<ListProxyPatternsData>): QueryKey<Options<ListProxyPatternsData>> => createQueryKey('listProxyPatterns', options, true);
+export const listTasksInfiniteQueryKey = (options?: Options<ListTasksData>): QueryKey<Options<ListTasksData>> => createQueryKey('listTasks', options, true);
 
 /**
- * List Proxy Patterns
+ * List Tasks
  */
-export const listProxyPatternsInfiniteOptions = (options?: Options<ListProxyPatternsData>) => {
-    return infiniteQueryOptions<ListProxyPatternsResponse, AxiosError<ListProxyPatternsError>, InfiniteData<ListProxyPatternsResponse>, QueryKey<Options<ListProxyPatternsData>>, number | Pick<QueryKey<Options<ListProxyPatternsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
+export const listTasksInfiniteOptions = (options?: Options<ListTasksData>) => {
+    return infiniteQueryOptions<ListTasksResponse, AxiosError<ListTasksError>, InfiniteData<ListTasksResponse>, QueryKey<Options<ListTasksData>>, number | Pick<QueryKey<Options<ListTasksData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
     // @ts-ignore
     {
         queryFn: async ({ pageParam, queryKey, signal }) => {
             // @ts-ignore
-            const page: Pick<QueryKey<Options<ListProxyPatternsData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
+            const page: Pick<QueryKey<Options<ListTasksData>>[0], 'body' | 'headers' | 'path' | 'query'> = typeof pageParam === 'object' ? pageParam : {
                 query: {
                     page: pageParam
                 }
             };
             const params = createInfiniteParams(queryKey, page);
-            const { data } = await Default.listProxyPatterns({
+            const { data } = await Default.listTasks({
                 ...options,
                 ...params,
                 signal,
@@ -113,19 +113,19 @@ export const listProxyPatternsInfiniteOptions = (options?: Options<ListProxyPatt
             });
             return data;
         },
-        queryKey: listProxyPatternsInfiniteQueryKey(options)
+        queryKey: listTasksInfiniteQueryKey(options)
     });
 };
 
-export const createProxyPatternQueryKey = (options: Options<CreateProxyPatternData>) => createQueryKey('createProxyPattern', options);
+export const createTaskQueryKey = (options: Options<CreateTaskData>) => createQueryKey('createTask', options);
 
 /**
- * Create Proxy Pattern
+ * Create Task
  */
-export const createProxyPatternOptions = (options: Options<CreateProxyPatternData>) => {
+export const createTaskOptions = (options: Options<CreateTaskData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await Default.createProxyPattern({
+            const { data } = await Default.createTask({
                 ...options,
                 ...queryKey[0],
                 signal,
@@ -133,17 +133,17 @@ export const createProxyPatternOptions = (options: Options<CreateProxyPatternDat
             });
             return data;
         },
-        queryKey: createProxyPatternQueryKey(options)
+        queryKey: createTaskQueryKey(options)
     });
 };
 
 /**
- * Create Proxy Pattern
+ * Create Task
  */
-export const createProxyPatternMutation = (options?: Partial<Options<CreateProxyPatternData>>): UseMutationOptions<CreateProxyPatternResponse, AxiosError<CreateProxyPatternError>, Options<CreateProxyPatternData>> => {
-    const mutationOptions: UseMutationOptions<CreateProxyPatternResponse, AxiosError<CreateProxyPatternError>, Options<CreateProxyPatternData>> = {
+export const createTaskMutation = (options?: Partial<Options<CreateTaskData>>): UseMutationOptions<CreateTaskResponse, AxiosError<CreateTaskError>, Options<CreateTaskData>> => {
+    const mutationOptions: UseMutationOptions<CreateTaskResponse, AxiosError<CreateTaskError>, Options<CreateTaskData>> = {
         mutationFn: async (localOptions) => {
-            const { data } = await Default.createProxyPattern({
+            const { data } = await Default.createTask({
                 ...options,
                 ...localOptions,
                 throwOnError: true
@@ -155,12 +155,12 @@ export const createProxyPatternMutation = (options?: Partial<Options<CreateProxy
 };
 
 /**
- * Delete Proxy Pattern
+ * Delete Task
  */
-export const deleteProxyPatternMutation = (options?: Partial<Options<DeleteProxyPatternData>>): UseMutationOptions<DeleteProxyPatternResponse, AxiosError<DeleteProxyPatternError>, Options<DeleteProxyPatternData>> => {
-    const mutationOptions: UseMutationOptions<DeleteProxyPatternResponse, AxiosError<DeleteProxyPatternError>, Options<DeleteProxyPatternData>> = {
+export const deleteTaskMutation = (options?: Partial<Options<DeleteTaskData>>): UseMutationOptions<DeleteTaskResponse, AxiosError<DeleteTaskError>, Options<DeleteTaskData>> => {
+    const mutationOptions: UseMutationOptions<DeleteTaskResponse, AxiosError<DeleteTaskError>, Options<DeleteTaskData>> = {
         mutationFn: async (localOptions) => {
-            const { data } = await Default.deleteProxyPattern({
+            const { data } = await Default.deleteTask({
                 ...options,
                 ...localOptions,
                 throwOnError: true
@@ -171,15 +171,15 @@ export const deleteProxyPatternMutation = (options?: Partial<Options<DeleteProxy
     return mutationOptions;
 };
 
-export const readProxyPatternQueryKey = (options: Options<ReadProxyPatternData>) => createQueryKey('readProxyPattern', options);
+export const readTaskQueryKey = (options: Options<ReadTaskData>) => createQueryKey('readTask', options);
 
 /**
- * Read Proxy Pattern
+ * Read Task
  */
-export const readProxyPatternOptions = (options: Options<ReadProxyPatternData>) => {
+export const readTaskOptions = (options: Options<ReadTaskData>) => {
     return queryOptions({
         queryFn: async ({ queryKey, signal }) => {
-            const { data } = await Default.readProxyPattern({
+            const { data } = await Default.readTask({
                 ...options,
                 ...queryKey[0],
                 signal,
@@ -187,17 +187,17 @@ export const readProxyPatternOptions = (options: Options<ReadProxyPatternData>) 
             });
             return data;
         },
-        queryKey: readProxyPatternQueryKey(options)
+        queryKey: readTaskQueryKey(options)
     });
 };
 
 /**
- * Update Proxy Pattern
+ * Update Task
  */
-export const updateProxyPatternMutation = (options?: Partial<Options<UpdateProxyPatternData>>): UseMutationOptions<UpdateProxyPatternResponse, AxiosError<UpdateProxyPatternError>, Options<UpdateProxyPatternData>> => {
-    const mutationOptions: UseMutationOptions<UpdateProxyPatternResponse, AxiosError<UpdateProxyPatternError>, Options<UpdateProxyPatternData>> = {
+export const updateTaskMutation = (options?: Partial<Options<UpdateTaskData>>): UseMutationOptions<UpdateTaskResponse, AxiosError<UpdateTaskError>, Options<UpdateTaskData>> => {
+    const mutationOptions: UseMutationOptions<UpdateTaskResponse, AxiosError<UpdateTaskError>, Options<UpdateTaskData>> = {
         mutationFn: async (localOptions) => {
-            const { data } = await Default.updateProxyPattern({
+            const { data } = await Default.updateTask({
                 ...options,
                 ...localOptions,
                 throwOnError: true

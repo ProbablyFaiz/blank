@@ -7,19 +7,19 @@ so it's perfectly alright to keep all routes in this file until it becomes unwie
 from typing import Annotated
 
 import sqlalchemy as sa
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from blank.api.deps import get_db, get_proxy_pattern
+from blank.api.deps import get_db, get_task
 from blank.api.interfaces import (
     PaginatedBase,
-    ProxyPatternCreate,
-    ProxyPatternItem,
-    ProxyPatternRead,
-    ProxyPatternUpdate,
+    TaskCreate,
+    TaskListItem,
+    TaskRead,
+    TaskUpdate,
 )
-from blank.db.models import PatternType, ProxyPattern
+from blank.db.models import Task, TaskPriority
 
 app = FastAPI()
 app.add_middleware(
@@ -32,20 +32,34 @@ app.add_middleware(
 
 
 @app.get(
-    "/proxy_patterns",
-    response_model=PaginatedBase[ProxyPatternItem],
-    operation_id="listProxyPatterns",
+    "/tasks",
+    response_model=PaginatedBase[TaskListItem],
+    operation_id="listTasks",
 )
-def list_proxy_patterns(
+def list_tasks(
     db: Annotated[Session, Depends(get_db)],
-    pattern_type: PatternType | None = None,
-    page: int = 1,
-    size: int = 10,
+    completed: bool | None = None,
+    priority: TaskPriority | None = None,
+    search: Annotated[str, Query()] | None = None,
+    page: Annotated[int, Query(ge=1)] = 1,
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
 ):
-    query = sa.select(ProxyPattern)
+    query = sa.select(Task)
 
-    if pattern_type is not None:
-        query = query.where(ProxyPattern.pattern_type == pattern_type)
+    if completed is not None:
+        query = query.where(Task.completed == completed)
+
+    if priority is not None:
+        query = query.where(Task.priority == priority)
+
+    if search is not None:
+        search_filter = f"%{search}%"
+        query = query.where(
+            sa.or_(
+                Task.title.ilike(search_filter),
+                Task.description.ilike(search_filter),
+            )
+        )
 
     # Get total count
     count_query = sa.select(sa.func.count()).select_from(query.subquery())
@@ -53,72 +67,68 @@ def list_proxy_patterns(
 
     # Apply pagination and ordering
     query = (
-        query.order_by(ProxyPattern.created_at.desc())
-        .offset((page - 1) * size)
-        .limit(size)
+        query.order_by(Task.created_at.desc()).offset((page - 1) * limit).limit(limit)
     )
-    patterns = db.execute(query).unique().scalars().all()
+    tasks = db.execute(query).unique().scalars().all()
 
     return PaginatedBase(
-        items=patterns,
+        items=tasks,
         total=total,
         page=page,
-        size=size,
+        size=limit,
     )
 
 
 @app.post(
-    "/proxy_patterns",
-    response_model=ProxyPatternRead,
-    operation_id="createProxyPattern",
+    "/tasks",
+    response_model=TaskRead,
+    operation_id="createTask",
 )
-def create_proxy_pattern(
-    pattern: ProxyPatternCreate, db: Annotated[Session, Depends(get_db)]
-):
-    db_pattern = ProxyPattern(**pattern.model_dump())
-    db.add(db_pattern)
+def create_task(task: TaskCreate, db: Annotated[Session, Depends(get_db)]):
+    db_task = Task(**task.model_dump())
+    db.add(db_task)
     db.commit()
-    db.refresh(db_pattern)
-    return db_pattern
+    db.refresh(db_task)
+    return db_task
 
 
 @app.get(
-    "/proxy_patterns/{pattern_id}",
-    response_model=ProxyPatternRead,
-    operation_id="readProxyPattern",
+    "/tasks/{task_id}",
+    response_model=TaskRead,
+    operation_id="readTask",
 )
-def read_proxy_pattern(
-    proxy_pattern: Annotated[ProxyPattern, Depends(get_proxy_pattern)],
+def read_task(
+    task: Annotated[Task, Depends(get_task)],
 ):
-    return proxy_pattern
+    return task
 
 
 @app.patch(
-    "/proxy_patterns/{pattern_id}",
-    response_model=ProxyPatternRead,
-    operation_id="updateProxyPattern",
+    "/tasks/{task_id}",
+    response_model=TaskRead,
+    operation_id="updateTask",
 )
-def update_proxy_pattern(
-    pattern_update: ProxyPatternUpdate,
-    proxy_pattern: Annotated[ProxyPattern, Depends(get_proxy_pattern)],
+def update_task(
+    task_update: TaskUpdate,
+    task: Annotated[Task, Depends(get_task)],
     db: Annotated[Session, Depends(get_db)],
 ):
-    for field, value in pattern_update.model_dump(exclude_unset=True).items():
-        setattr(proxy_pattern, field, value)
+    for field, value in task_update.model_dump(exclude_unset=True).items():
+        setattr(task, field, value)
 
     db.commit()
-    db.refresh(proxy_pattern)
-    return proxy_pattern
+    db.refresh(task)
+    return task
 
 
 @app.delete(
-    "/proxy_patterns/{pattern_id}",
+    "/tasks/{task_id}",
     status_code=204,
-    operation_id="deleteProxyPattern",
+    operation_id="deleteTask",
 )
-def delete_proxy_pattern(
-    proxy_pattern: Annotated[ProxyPattern, Depends(get_proxy_pattern)],
+def delete_task(
+    task: Annotated[Task, Depends(get_task)],
     db: Annotated[Session, Depends(get_db)],
 ):
-    db.delete(proxy_pattern)
+    db.delete(task)
     db.commit()

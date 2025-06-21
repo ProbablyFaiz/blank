@@ -11,13 +11,13 @@ export type HttpValidationError = {
 };
 
 /**
- * PaginatedBase[ProxyPatternItem]
+ * PaginatedBase[TaskListItem]
  */
-export type PaginatedBaseProxyPatternItem = {
+export type PaginatedBaseTaskListItem = {
     /**
      * Items
      */
-    items: Array<ProxyPatternItem>;
+    items: Array<TaskListItem>;
     /**
      * Total
      */
@@ -41,64 +41,41 @@ export type PaginatedBaseProxyPatternItem = {
 };
 
 /**
- * PatternType
+ * TaskCreate
  */
-export type PatternType = 'regex' | 'url';
-
-/**
- * PatternType
- */
-export const PatternType = {
-    REGEX: 'regex',
-    URL: 'url'
-} as const;
-
-/**
- * ProxyPatternCreate
- */
-export type ProxyPatternCreate = {
+export type TaskCreate = {
     /**
-     * Pattern
+     * Title
      */
-    pattern: string;
+    title: string;
     /**
-     * Enabled
+     * Description
      */
-    enabled?: boolean;
+    description?: string | null;
+    priority?: TaskPriority;
 };
 
 /**
- * ProxyPatternItem
+ * TaskListItem
  */
-export type ProxyPatternItem = {
+export type TaskListItem = {
     /**
      * Id
      */
     id: number;
     /**
-     * Enabled
+     * Title
      */
-    enabled: boolean;
-    pattern_type: PatternType;
-};
-
-/**
- * ProxyPatternRead
- */
-export type ProxyPatternRead = {
+    title: string;
     /**
-     * Id
+     * Completed
      */
-    id: number;
+    completed: boolean;
+    priority: TaskPriority;
     /**
-     * Enabled
+     * Description
      */
-    enabled: boolean;
-    pattern_type: PatternType;
-    /**
-     * Pattern
-     */
-    pattern: string;
+    description: string | null;
     /**
      * Created At
      */
@@ -110,17 +87,67 @@ export type ProxyPatternRead = {
 };
 
 /**
- * ProxyPatternUpdate
+ * TaskPriority
  */
-export type ProxyPatternUpdate = {
+export type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH';
+
+/**
+ * TaskPriority
+ */
+export const TaskPriority = {
+    LOW: 'LOW',
+    MEDIUM: 'MEDIUM',
+    HIGH: 'HIGH'
+} as const;
+
+/**
+ * TaskRead
+ */
+export type TaskRead = {
     /**
-     * Pattern
+     * Id
      */
-    pattern?: string | null;
+    id: number;
     /**
-     * Enabled
+     * Title
      */
-    enabled?: boolean | null;
+    title: string;
+    /**
+     * Completed
+     */
+    completed: boolean;
+    priority: TaskPriority;
+    /**
+     * Description
+     */
+    description: string | null;
+    /**
+     * Created At
+     */
+    created_at: Date;
+    /**
+     * Updated At
+     */
+    updated_at: Date;
+};
+
+/**
+ * TaskUpdate
+ */
+export type TaskUpdate = {
+    /**
+     * Title
+     */
+    title?: string | null;
+    /**
+     * Description
+     */
+    description?: string | null;
+    /**
+     * Completed
+     */
+    completed?: boolean | null;
+    priority?: TaskPriority | null;
 };
 
 /**
@@ -141,158 +168,166 @@ export type ValidationError = {
     type: string;
 };
 
-export type ListProxyPatternsData = {
+export type ListTasksData = {
     body?: never;
     path?: never;
     query?: {
         /**
-         * Pattern Type
+         * Completed
          */
-        pattern_type?: PatternType | null;
+        completed?: boolean | null;
+        /**
+         * Priority
+         */
+        priority?: TaskPriority | null;
+        /**
+         * Search
+         */
+        search?: string | null;
         /**
          * Page
          */
         page?: number;
         /**
-         * Size
+         * Limit
          */
-        size?: number;
+        limit?: number;
     };
-    url: '/proxy_patterns';
+    url: '/tasks';
 };
 
-export type ListProxyPatternsErrors = {
+export type ListTasksErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ListProxyPatternsError = ListProxyPatternsErrors[keyof ListProxyPatternsErrors];
+export type ListTasksError = ListTasksErrors[keyof ListTasksErrors];
 
-export type ListProxyPatternsResponses = {
+export type ListTasksResponses = {
     /**
      * Successful Response
      */
-    200: PaginatedBaseProxyPatternItem;
+    200: PaginatedBaseTaskListItem;
 };
 
-export type ListProxyPatternsResponse = ListProxyPatternsResponses[keyof ListProxyPatternsResponses];
+export type ListTasksResponse = ListTasksResponses[keyof ListTasksResponses];
 
-export type CreateProxyPatternData = {
-    body: ProxyPatternCreate;
+export type CreateTaskData = {
+    body: TaskCreate;
     path?: never;
     query?: never;
-    url: '/proxy_patterns';
+    url: '/tasks';
 };
 
-export type CreateProxyPatternErrors = {
+export type CreateTaskErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type CreateProxyPatternError = CreateProxyPatternErrors[keyof CreateProxyPatternErrors];
+export type CreateTaskError = CreateTaskErrors[keyof CreateTaskErrors];
 
-export type CreateProxyPatternResponses = {
+export type CreateTaskResponses = {
     /**
      * Successful Response
      */
-    200: ProxyPatternRead;
+    200: TaskRead;
 };
 
-export type CreateProxyPatternResponse = CreateProxyPatternResponses[keyof CreateProxyPatternResponses];
+export type CreateTaskResponse = CreateTaskResponses[keyof CreateTaskResponses];
 
-export type DeleteProxyPatternData = {
+export type DeleteTaskData = {
     body?: never;
     path: {
         /**
-         * Pattern Id
+         * Task Id
          */
-        pattern_id: number;
+        task_id: number;
     };
     query?: never;
-    url: '/proxy_patterns/{pattern_id}';
+    url: '/tasks/{task_id}';
 };
 
-export type DeleteProxyPatternErrors = {
+export type DeleteTaskErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type DeleteProxyPatternError = DeleteProxyPatternErrors[keyof DeleteProxyPatternErrors];
+export type DeleteTaskError = DeleteTaskErrors[keyof DeleteTaskErrors];
 
-export type DeleteProxyPatternResponses = {
+export type DeleteTaskResponses = {
     /**
      * Successful Response
      */
     204: void;
 };
 
-export type DeleteProxyPatternResponse = DeleteProxyPatternResponses[keyof DeleteProxyPatternResponses];
+export type DeleteTaskResponse = DeleteTaskResponses[keyof DeleteTaskResponses];
 
-export type ReadProxyPatternData = {
+export type ReadTaskData = {
     body?: never;
     path: {
         /**
-         * Pattern Id
+         * Task Id
          */
-        pattern_id: number;
+        task_id: number;
     };
     query?: never;
-    url: '/proxy_patterns/{pattern_id}';
+    url: '/tasks/{task_id}';
 };
 
-export type ReadProxyPatternErrors = {
+export type ReadTaskErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type ReadProxyPatternError = ReadProxyPatternErrors[keyof ReadProxyPatternErrors];
+export type ReadTaskError = ReadTaskErrors[keyof ReadTaskErrors];
 
-export type ReadProxyPatternResponses = {
+export type ReadTaskResponses = {
     /**
      * Successful Response
      */
-    200: ProxyPatternRead;
+    200: TaskRead;
 };
 
-export type ReadProxyPatternResponse = ReadProxyPatternResponses[keyof ReadProxyPatternResponses];
+export type ReadTaskResponse = ReadTaskResponses[keyof ReadTaskResponses];
 
-export type UpdateProxyPatternData = {
-    body: ProxyPatternUpdate;
+export type UpdateTaskData = {
+    body: TaskUpdate;
     path: {
         /**
-         * Pattern Id
+         * Task Id
          */
-        pattern_id: number;
+        task_id: number;
     };
     query?: never;
-    url: '/proxy_patterns/{pattern_id}';
+    url: '/tasks/{task_id}';
 };
 
-export type UpdateProxyPatternErrors = {
+export type UpdateTaskErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type UpdateProxyPatternError = UpdateProxyPatternErrors[keyof UpdateProxyPatternErrors];
+export type UpdateTaskError = UpdateTaskErrors[keyof UpdateTaskErrors];
 
-export type UpdateProxyPatternResponses = {
+export type UpdateTaskResponses = {
     /**
      * Successful Response
      */
-    200: ProxyPatternRead;
+    200: TaskRead;
 };
 
-export type UpdateProxyPatternResponse = UpdateProxyPatternResponses[keyof UpdateProxyPatternResponses];
+export type UpdateTaskResponse = UpdateTaskResponses[keyof UpdateTaskResponses];
 
 export type ClientOptions = {
     baseURL: 'http://localhost:8101' | (string & {});

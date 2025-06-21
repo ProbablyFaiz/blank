@@ -32,15 +32,17 @@ class IndexedTimestampMixin:
     )
 
 
-class PatternType(StrEnum):
-    NAME = "regex"
-    URL = "url"
+class TaskPriority(StrEnum):
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
 
 
-class ProxyPattern(Base, IndexedTimestampMixin):
-    __tablename__ = "proxy_patterns"
+class Task(Base, IndexedTimestampMixin):
+    __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    pattern: Mapped[str] = mapped_column(unique=True)
-    enabled: Mapped[bool] = mapped_column(server_default=sa.text("true"))
-    pattern_type: Mapped[PatternType] = mapped_column(String())
+    title: Mapped[str] = mapped_column()
+    description: Mapped[str | None] = mapped_column()
+    completed: Mapped[bool] = mapped_column(server_default=sa.text("false"))
+    priority: Mapped[TaskPriority] = mapped_column(String())
