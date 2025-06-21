@@ -16,6 +16,7 @@ alwaysApply: true
     - Remember when creating migrations for non-nullable columns that if they are for an existing table, you will probably need to
     modify the migration to first create the column as nullable, initialize the column's values appropriately, and then set it to
     non-nullable.
+- You should not, unless instructed, run the API or frontend dev servers; the developer is almost certainly already running them, and you doing so will just be harmful.
 
 Note that, as shown, to run code in the backend Python environment, one must run `uv run <your python command>`
 inside the `backend/` directory. The `just` shortcuts handle this for you when they are available.
