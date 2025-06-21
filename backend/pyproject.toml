@@ -24,6 +24,8 @@ dependencies = [
     "httpx[socks]>=0.27.2",
     "gunicorn>=23.0.0",
     "boto3>=1.38.41",
+    "celery>=5.5.3",
+    "redis>=6.2.0",
 ]
 
 [dependency-groups]
