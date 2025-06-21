@@ -11,6 +11,36 @@ export type HttpValidationError = {
 };
 
 /**
+ * PaginatedBase[ProxyPatternItem]
+ */
+export type PaginatedBaseProxyPatternItem = {
+    /**
+     * Items
+     */
+    items: Array<ProxyPatternItem>;
+    /**
+     * Total
+     */
+    total: number;
+    /**
+     * Page
+     */
+    page: number;
+    /**
+     * Size
+     */
+    size: number;
+    /**
+     * Next Page
+     */
+    next_page: number | null;
+    /**
+     * Num Pages
+     */
+    readonly num_pages: number;
+};
+
+/**
  * PatternType
  */
 export type PatternType = 'regex' | 'url';
@@ -35,6 +65,21 @@ export type ProxyPatternCreate = {
      * Enabled
      */
     enabled?: boolean;
+};
+
+/**
+ * ProxyPatternItem
+ */
+export type ProxyPatternItem = {
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Enabled
+     */
+    enabled: boolean;
+    pattern_type: PatternType;
 };
 
 /**
@@ -99,16 +144,37 @@ export type ValidationError = {
 export type ListProxyPatternsData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        /**
+         * Pattern Type
+         */
+        pattern_type?: PatternType | null;
+        /**
+         * Page
+         */
+        page?: number;
+        /**
+         * Size
+         */
+        size?: number;
+    };
     url: '/proxy_patterns';
 };
 
+export type ListProxyPatternsErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListProxyPatternsError = ListProxyPatternsErrors[keyof ListProxyPatternsErrors];
+
 export type ListProxyPatternsResponses = {
     /**
-     * Response Listproxypatterns
      * Successful Response
      */
-    200: Array<ProxyPatternRead>;
+    200: PaginatedBaseProxyPatternItem;
 };
 
 export type ListProxyPatternsResponse = ListProxyPatternsResponses[keyof ListProxyPatternsResponses];

@@ -6,18 +6,20 @@ so it's perfectly alright to keep all routes in this file until it becomes unwie
 
 from typing import Annotated
 
+import sqlalchemy as sa
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from blank.api.deps import get_db, get_proxy_pattern
 from blank.api.interfaces import (
+    PaginatedBase,
     ProxyPatternCreate,
+    ProxyPatternItem,
     ProxyPatternRead,
     ProxyPatternUpdate,
 )
-from blank.db.models import ProxyPattern
+from blank.db.models import PatternType, ProxyPattern
 
 app = FastAPI()
 app.add_middleware(
@@ -31,11 +33,38 @@ app.add_middleware(
 
 @app.get(
     "/proxy_patterns",
-    response_model=list[ProxyPatternRead],
+    response_model=PaginatedBase[ProxyPatternItem],
     operation_id="listProxyPatterns",
 )
-def list_proxy_patterns(db: Annotated[Session, Depends(get_db)]):
-    return db.scalars(select(ProxyPattern)).all()
+def list_proxy_patterns(
+    db: Annotated[Session, Depends(get_db)],
+    pattern_type: PatternType | None = None,
+    page: int = 1,
+    size: int = 10,
+):
+    query = sa.select(ProxyPattern)
+
+    if pattern_type is not None:
+        query = query.where(ProxyPattern.pattern_type == pattern_type)
+
+    # Get total count
+    count_query = sa.select(sa.func.count()).select_from(query.subquery())
+    total = db.execute(count_query).scalar() or 0
+
+    # Apply pagination and ordering
+    query = (
+        query.order_by(ProxyPattern.created_at.desc())
+        .offset((page - 1) * size)
+        .limit(size)
+    )
+    patterns = db.execute(query).unique().scalars().all()
+
+    return PaginatedBase(
+        items=patterns,
+        total=total,
+        page=page,
+        size=size,
+    )
 
 
 @app.post(

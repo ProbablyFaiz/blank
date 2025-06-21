@@ -1,7 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { Shield, Users, Zap } from "lucide-react";
 import type React from "react";
-import { readProxyPatternOptions } from "@/client/@tanstack/react-query.gen";
 import {
   Card,
   CardContent,
@@ -35,16 +33,6 @@ const features = [
 ];
 
 export const Features: React.FC = () => {
-  const { data: patterns } = useQuery({
-    ...readProxyPatternOptions({
-      path: {
-        pattern_id: 1,
-      },
-    }),
-  });
-
-  console.log(patterns);
-
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">

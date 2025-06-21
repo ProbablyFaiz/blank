@@ -2,8 +2,8 @@
 
 import type { Client, Options as ClientOptions, TDataShape } from '@hey-api/client-axios';
 import { client as _heyApiClient } from './client.gen';
-import { createProxyPatternResponseTransformer, listProxyPatternsResponseTransformer, readProxyPatternResponseTransformer, updateProxyPatternResponseTransformer } from './transformers.gen';
-import type { CreateProxyPatternData, CreateProxyPatternErrors, CreateProxyPatternResponses, DeleteProxyPatternData, DeleteProxyPatternErrors, DeleteProxyPatternResponses, ListProxyPatternsData, ListProxyPatternsResponses, ReadProxyPatternData, ReadProxyPatternErrors, ReadProxyPatternResponses, UpdateProxyPatternData, UpdateProxyPatternErrors, UpdateProxyPatternResponses } from './types.gen';
+import { createProxyPatternResponseTransformer, readProxyPatternResponseTransformer, updateProxyPatternResponseTransformer } from './transformers.gen';
+import type { CreateProxyPatternData, CreateProxyPatternErrors, CreateProxyPatternResponses, DeleteProxyPatternData, DeleteProxyPatternErrors, DeleteProxyPatternResponses, ListProxyPatternsData, ListProxyPatternsErrors, ListProxyPatternsResponses, ReadProxyPatternData, ReadProxyPatternErrors, ReadProxyPatternResponses, UpdateProxyPatternData, UpdateProxyPatternErrors, UpdateProxyPatternResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = ClientOptions<TData, ThrowOnError> & {
     /**
@@ -24,9 +24,8 @@ export class Default {
      * List Proxy Patterns
      */
     public static listProxyPatterns<ThrowOnError extends boolean = false>(options?: Options<ListProxyPatternsData, ThrowOnError>) {
-        return (options?.client ?? _heyApiClient).get<ListProxyPatternsResponses, unknown, ThrowOnError>({
+        return (options?.client ?? _heyApiClient).get<ListProxyPatternsResponses, ListProxyPatternsErrors, ThrowOnError>({
             responseType: 'json',
-            responseTransformer: listProxyPatternsResponseTransformer,
             url: '/proxy_patterns',
             ...options
         });
