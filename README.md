@@ -2,7 +2,13 @@
 
 A full-stack template with a React frontend and FastAPI backend.
 
+## Template Project TODOs
 
+- Add good examples of backend, frontend, and end-to-end tests
+  - Backend tests with Pytest
+  - End-to-end tests with Playwright?
+  - Frontend tests with Vitest?
+- Add documentation for setting up the production deployment
 
 ## Prerequisites
 
