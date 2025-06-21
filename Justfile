@@ -35,6 +35,10 @@ lint:
 typecheck:
     cd frontend && pnpm run typecheck
 
+
+shadcn-add *ARGS:
+    cd frontend && pnpm dlx shadcn@latest add {{ARGS}}
+
 # Generate a migration with the provided message
 migrate *ARGS:
     #!/usr/bin/env fish
