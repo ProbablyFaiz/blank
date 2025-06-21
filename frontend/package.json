@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
     "preview": "vite preview",
     "openapi": "openapi-ts",
     "routes": "tsr generate",
+    "format": "biome format",
+    "lint": "biome check .",
     "typecheck": "tsc -b"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "tailwindcss": "^4.1.10"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.0.4",
     "@tanstack/router-cli": "^1.121.27",
     "@types/node": "^22.15.32",
     "@types/react": "^18.3.23",

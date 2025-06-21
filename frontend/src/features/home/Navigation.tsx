@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import { Sparkles } from "lucide-react";
-import React from "react";
+import type React from "react";
+import { Button } from "@/components/ui/button";
 
 export const Navigation: React.FC = () => {
   return (

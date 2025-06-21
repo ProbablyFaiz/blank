@@ -1,3 +1,5 @@
+import { Shield, Users, Zap } from "lucide-react";
+import type React from "react";
 import {
   Card,
   CardContent,
@@ -5,23 +7,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Shield, Users, Zap } from "lucide-react";
-import React from "react";
 
 const features = [
   {
+    id: "lightning-fast",
     icon: <Zap className="h-6 w-6" />,
     title: "Lightning Fast",
     description:
       "Built with modern technologies for optimal performance and speed.",
   },
   {
+    id: "secure-by-default",
     icon: <Shield className="h-6 w-6" />,
     title: "Secure by Default",
     description:
       "Enterprise-grade security with end-to-end encryption and privacy protection.",
   },
   {
+    id: "team-collaboration",
     icon: <Users className="h-6 w-6" />,
     title: "Team Collaboration",
     description:
@@ -44,9 +47,10 @@ export const Features: React.FC = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <Card
-              key={index}
+              id={feature.id}
+              key={feature.id}
               className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
               <CardHeader>

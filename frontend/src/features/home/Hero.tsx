@@ -1,3 +1,5 @@
+import { ArrowRight, Github } from "lucide-react";
+import type React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,8 +11,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Github } from "lucide-react";
-import React from "react";
 
 interface HeroProps {
   email: string;

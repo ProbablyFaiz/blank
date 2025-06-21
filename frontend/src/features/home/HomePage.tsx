@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { CTA } from "./CTA";
 import { Features } from "./Features";
 import { Hero } from "./Hero";

@@ -1,3 +1,6 @@
+import { Link } from "@tanstack/react-router";
+import { ArrowLeft, Code, Coffee, Heart } from "lucide-react";
+import type React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,9 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Code, Coffee, Heart } from "lucide-react";
-import React from "react";
 
 const AboutPage: React.FC = () => {
   return (
