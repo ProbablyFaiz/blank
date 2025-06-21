@@ -1,0 +1,35 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "lint",
+        "type": "shell",
+        "command": "just lint",
+        "group": "build",
+        "presentation": {
+          "echo": false,
+          "reveal": "never",
+          "focus": false,
+          "panel": "shared",
+          "showReuseMessage": false,
+          "clear": true
+        },
+        "problemMatcher": []
+      },
+      {
+        "label": "openapi",
+        "type": "shell",
+        "command": "just openapi",
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared",
+          "showReuseMessage": false,
+          "clear": true
+        },
+        "problemMatcher": []
+      }
+    ]
+  }

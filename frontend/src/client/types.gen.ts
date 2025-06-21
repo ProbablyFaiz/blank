@@ -4,239 +4,230 @@
  * HTTPValidationError
  */
 export type HttpValidationError = {
-  /**
-   * Detail
-   */
-  detail?: Array<ValidationError>;
+    /**
+     * Detail
+     */
+    detail?: Array<ValidationError>;
 };
 
 /**
  * PatternType
  */
-export type PatternType = "regex" | "url";
+export type PatternType = 'regex' | 'url';
 
 /**
  * PatternType
  */
 export const PatternType = {
-  REGEX: "regex",
-  URL: "url",
+    REGEX: 'regex',
+    URL: 'url'
 } as const;
 
 /**
  * ProxyPatternCreate
  */
 export type ProxyPatternCreate = {
-  /**
-   * Pattern
-   */
-  pattern: string;
-  /**
-   * Enabled
-   */
-  enabled?: boolean;
+    /**
+     * Pattern
+     */
+    pattern: string;
+    /**
+     * Enabled
+     */
+    enabled?: boolean;
 };
 
 /**
  * ProxyPatternRead
  */
 export type ProxyPatternRead = {
-  /**
-   * Id
-   */
-  id: number;
-  /**
-   * Pattern
-   */
-  pattern: string;
-  /**
-   * Enabled
-   */
-  enabled: boolean;
-  pattern_type: PatternType;
-  /**
-   * Created At
-   */
-  created_at: Date;
-  /**
-   * Updated At
-   */
-  updated_at: Date;
+    /**
+     * Id
+     */
+    id: number;
+    /**
+     * Enabled
+     */
+    enabled: boolean;
+    pattern_type: PatternType;
+    /**
+     * Pattern
+     */
+    pattern: string;
+    /**
+     * Created At
+     */
+    created_at: Date;
+    /**
+     * Updated At
+     */
+    updated_at: Date;
 };
 
 /**
  * ProxyPatternUpdate
  */
 export type ProxyPatternUpdate = {
-  /**
-   * Pattern
-   */
-  pattern?: string | null;
-  /**
-   * Enabled
-   */
-  enabled?: boolean | null;
+    /**
+     * Pattern
+     */
+    pattern?: string | null;
+    /**
+     * Enabled
+     */
+    enabled?: boolean | null;
 };
 
 /**
  * ValidationError
  */
 export type ValidationError = {
-  /**
-   * Location
-   */
-  loc: Array<string | number>;
-  /**
-   * Message
-   */
-  msg: string;
-  /**
-   * Error Type
-   */
-  type: string;
+    /**
+     * Location
+     */
+    loc: Array<string | number>;
+    /**
+     * Message
+     */
+    msg: string;
+    /**
+     * Error Type
+     */
+    type: string;
 };
 
 export type ListProxyPatternsData = {
-  body?: never;
-  path?: never;
-  query?: never;
-  url: "/proxy_patterns";
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/proxy_patterns';
 };
 
 export type ListProxyPatternsResponses = {
-  /**
-   * Response Listproxypatterns
-   * Successful Response
-   */
-  200: Array<ProxyPatternRead>;
+    /**
+     * Response Listproxypatterns
+     * Successful Response
+     */
+    200: Array<ProxyPatternRead>;
 };
 
-export type ListProxyPatternsResponse =
-  ListProxyPatternsResponses[keyof ListProxyPatternsResponses];
+export type ListProxyPatternsResponse = ListProxyPatternsResponses[keyof ListProxyPatternsResponses];
 
 export type CreateProxyPatternData = {
-  body: ProxyPatternCreate;
-  path?: never;
-  query?: never;
-  url: "/proxy_patterns";
+    body: ProxyPatternCreate;
+    path?: never;
+    query?: never;
+    url: '/proxy_patterns';
 };
 
 export type CreateProxyPatternErrors = {
-  /**
-   * Validation Error
-   */
-  422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type CreateProxyPatternError =
-  CreateProxyPatternErrors[keyof CreateProxyPatternErrors];
+export type CreateProxyPatternError = CreateProxyPatternErrors[keyof CreateProxyPatternErrors];
 
 export type CreateProxyPatternResponses = {
-  /**
-   * Successful Response
-   */
-  200: ProxyPatternRead;
+    /**
+     * Successful Response
+     */
+    200: ProxyPatternRead;
 };
 
-export type CreateProxyPatternResponse =
-  CreateProxyPatternResponses[keyof CreateProxyPatternResponses];
+export type CreateProxyPatternResponse = CreateProxyPatternResponses[keyof CreateProxyPatternResponses];
 
 export type DeleteProxyPatternData = {
-  body?: never;
-  path: {
-    /**
-     * Pattern Id
-     */
-    pattern_id: number;
-  };
-  query?: never;
-  url: "/proxy_patterns/{pattern_id}";
+    body?: never;
+    path: {
+        /**
+         * Pattern Id
+         */
+        pattern_id: number;
+    };
+    query?: never;
+    url: '/proxy_patterns/{pattern_id}';
 };
 
 export type DeleteProxyPatternErrors = {
-  /**
-   * Validation Error
-   */
-  422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type DeleteProxyPatternError =
-  DeleteProxyPatternErrors[keyof DeleteProxyPatternErrors];
+export type DeleteProxyPatternError = DeleteProxyPatternErrors[keyof DeleteProxyPatternErrors];
 
 export type DeleteProxyPatternResponses = {
-  /**
-   * Successful Response
-   */
-  204: void;
+    /**
+     * Successful Response
+     */
+    204: void;
 };
 
-export type DeleteProxyPatternResponse =
-  DeleteProxyPatternResponses[keyof DeleteProxyPatternResponses];
+export type DeleteProxyPatternResponse = DeleteProxyPatternResponses[keyof DeleteProxyPatternResponses];
 
 export type ReadProxyPatternData = {
-  body?: never;
-  path: {
-    /**
-     * Pattern Id
-     */
-    pattern_id: number;
-  };
-  query?: never;
-  url: "/proxy_patterns/{pattern_id}";
+    body?: never;
+    path: {
+        /**
+         * Pattern Id
+         */
+        pattern_id: number;
+    };
+    query?: never;
+    url: '/proxy_patterns/{pattern_id}';
 };
 
 export type ReadProxyPatternErrors = {
-  /**
-   * Validation Error
-   */
-  422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type ReadProxyPatternError =
-  ReadProxyPatternErrors[keyof ReadProxyPatternErrors];
+export type ReadProxyPatternError = ReadProxyPatternErrors[keyof ReadProxyPatternErrors];
 
 export type ReadProxyPatternResponses = {
-  /**
-   * Successful Response
-   */
-  200: ProxyPatternRead;
+    /**
+     * Successful Response
+     */
+    200: ProxyPatternRead;
 };
 
-export type ReadProxyPatternResponse =
-  ReadProxyPatternResponses[keyof ReadProxyPatternResponses];
+export type ReadProxyPatternResponse = ReadProxyPatternResponses[keyof ReadProxyPatternResponses];
 
 export type UpdateProxyPatternData = {
-  body: ProxyPatternUpdate;
-  path: {
-    /**
-     * Pattern Id
-     */
-    pattern_id: number;
-  };
-  query?: never;
-  url: "/proxy_patterns/{pattern_id}";
+    body: ProxyPatternUpdate;
+    path: {
+        /**
+         * Pattern Id
+         */
+        pattern_id: number;
+    };
+    query?: never;
+    url: '/proxy_patterns/{pattern_id}';
 };
 
 export type UpdateProxyPatternErrors = {
-  /**
-   * Validation Error
-   */
-  422: HttpValidationError;
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
 };
 
-export type UpdateProxyPatternError =
-  UpdateProxyPatternErrors[keyof UpdateProxyPatternErrors];
+export type UpdateProxyPatternError = UpdateProxyPatternErrors[keyof UpdateProxyPatternErrors];
 
 export type UpdateProxyPatternResponses = {
-  /**
-   * Successful Response
-   */
-  200: ProxyPatternRead;
+    /**
+     * Successful Response
+     */
+    200: ProxyPatternRead;
 };
 
-export type UpdateProxyPatternResponse =
-  UpdateProxyPatternResponses[keyof UpdateProxyPatternResponses];
+export type UpdateProxyPatternResponse = UpdateProxyPatternResponses[keyof UpdateProxyPatternResponses];
 
 export type ClientOptions = {
-  baseURL: "http://localhost:8101" | (string & {});
+    baseURL: 'http://localhost:8101' | (string & {});
 };

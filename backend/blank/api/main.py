@@ -1,3 +1,9 @@
+"""
+This file contains the FastAPI app and its routes. Note: As the project grows, you'll
+want to use FastAPI's router feature to split the routes into separate files. This is easy;
+so it's perfectly alright to keep all routes in this file until it becomes unwieldy.
+"""
+
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
