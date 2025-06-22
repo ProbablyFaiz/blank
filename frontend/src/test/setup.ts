@@ -1,10 +1,16 @@
 import "@testing-library/jest-dom";
 import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { client } from "@/client/client.gen";
 import { server } from "./mocks/server";
 
 // Start MSW server before all tests
-beforeAll(() => server.listen());
+beforeAll(() => {
+  client.setConfig({
+    baseURL: "/api",
+  });
+  server.listen();
+});
 
 // Reset handlers after each test (important for test isolation)
 afterEach(() => {
