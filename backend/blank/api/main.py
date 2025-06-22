@@ -20,6 +20,10 @@ from blank.api.interfaces import (
     TaskUpdate,
 )
 from blank.db.models import Task, TaskPriority
+from blank.jobs.celery import celery_app
+from blank.utils.observe import safe_init_sentry
+
+safe_init_sentry()
 
 app = FastAPI()
 app.add_middleware(
@@ -29,6 +33,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/health")
+def health():
+    celery_app.send_task("blank.jobs.tasks.healthy_job")
+    return {"status": "ok"}
+
+
+@app.get("/error")
+def error():
+    celery_app.send_task("blank.jobs.tasks.error_job")
+    raise Exception("Test error")
 
 
 @app.get(

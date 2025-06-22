@@ -15,6 +15,10 @@ api *ARGS:
 frontend *ARGS:
     cd frontend && pnpm dev --host 0.0.0.0 --port 5185 {{ARGS}}
 
+# Start the celery dev worker
+celery *ARGS:
+    cd backend && uv run celery -A blank.jobs.celery:celery_app worker --loglevel=info {{ARGS}}
+
 # Build the frontend for production
 build:
     cd frontend && pnpm build

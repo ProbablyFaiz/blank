@@ -1,7 +1,13 @@
-from celery import Celery
+from celery import Celery, signals
 
 from blank.db.redis import get_redis_url
 from blank.jobs.schedule import BEAT_SCHEDULE
+from blank.utils.observe import safe_init_sentry
+
+
+@signals.celeryd_init.connect
+def init_sentry(**_kwargs):
+    safe_init_sentry()
 
 
 def get_celery_app() -> Celery:
