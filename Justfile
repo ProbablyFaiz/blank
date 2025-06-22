@@ -35,6 +35,14 @@ typecheck:
 shadd *ARGS:
     cd frontend && pnpm dlx shadcn@latest add {{ARGS}}
 
+
+test-frontend:
+    cd frontend && pnpm test:run
+
+
+test-backend:
+    cd backend && uv run pytest
+
 # Generate a migration with the provided message
 migrate *ARGS:
     #!/usr/bin/env fish
