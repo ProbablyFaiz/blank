@@ -10,7 +10,10 @@
     "openapi": "openapi-ts",
     "format": "biome format",
     "lint": "biome check .",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "@hey-api/client-axios": "^0.9.1",
