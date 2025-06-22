@@ -36,8 +36,11 @@ just install
 ```
 
 This installs:
+- Pre-commit hooks (will also install `pre-commit` as a user-wide `uv` tool)
 - Python dependencies in a virtual environment via `uv`
 - Frontend dependencies via `pnpm`
+
+If you need more granular control over your environment setup, see the `just install` definition in `Justfile` for a starting point.
 
 ### 3. Configure Environment
 
@@ -72,11 +75,16 @@ Your app will be available at:
 - Backend API: http://localhost:8101
 - API Docs: http://localhost:8101/docs
 
+### 5. Run Tests
+
+To ensure all tests are passing, run:
+
 ## Available Commands
 
 ### Development
 - `just api` - Start FastAPI backend server
-- `just frontend` - Start React development server
+- `just frontend` - Start Vite development server
+  - Note that the dev server must be running for Tanstack Router's route tree to automatically re-generate when you change routes
 - `just openapi` - Regenerate API client from backend OpenAPI spec
 - `just shadd <component>` - Add a shadcn/ui component; equivalent to `pnpm dlx shadcn@latest add <component>`
 
@@ -85,6 +93,30 @@ Your app will be available at:
 - `just lint` - Run pre-commit hooks (formatting, linting)
 - `just typecheck` - Run TypeScript type checking
 
+### Testing
+
+To run frontend tests:
+```bash
+just test-frontend
+# Or, to run a specific test file:
+just test-frontend <path to test file, relative to frontend/>
+# E.g.,
+just test-frontend src/features/home/HomePage.test.tsx
+```
+
+To run backend tests:
+```bash
+just test-backend
+# Or, to run a specific test file:
+just test-backend <path to test file, relative to backend/>
+# E.g.,
+just test-backend test/api/test_tasks_api.py
+```
+
+To run all tests:
+```bash
+just test-all
+```
 ### Database
 - `just migrate "description"` - Generate new Alembic migration
 - `just migrate-up` - Apply pending migrations
@@ -94,22 +126,35 @@ Your app will be available at:
 - `just` - Show all available commands
 - `just install` - Install all dependencies (frontend + backend)
 
+
+## Production Deployment
+
+TODO
+
 ## Project Structure
 
 ```
 ├── backend/           # FastAPI backend
 │   ├── blank/         # Main package (rename this!)
-│   │   ├── api/       # API routes
-│   │   └── db/        # Database models & session
-│   ├── alembic/       # Database migrations
+│   │   ├── api/       # API routes & endpoints
+│   │   ├── db/        # Database models, sessions & migrations
+│   │   ├── jobs/      # Background job processing (Celery)
+│   │   └── utils/     # Shared utilities (observability, storage)
+│   ├── test/          # Backend tests
 │   └── pyproject.toml # Python dependencies
 ├── frontend/          # React frontend
 │   ├── src/
 │   │   ├── routes/    # TanStack Router routes
 │   │   ├── features/  # Feature-based components
-│   │   └── components/ui/ # shadcn/ui components
+│   │   ├── components/# Shared components & shadcn/ui
+│   │   ├── client/    # Generated API client
+│   │   └── lib/       # Utility functions
 │   └── package.json   # Frontend dependencies
-└── Justfile          # Task automation
+├── docs/              # Documentation
+├── infra/             # Infrastructure scripts (DB setup)
+├── .github/workflows/ # CI/CD workflows
+├── docker-compose.yml # Multi-container setup
+└── Justfile           # Task automation
 ```
 
 **Note on Authentication:** This template doesn't include authentication by default. For production apps, we recommend Auth0 with `fastapi-auth0` (backend) and `@auth0/auth0-react` (frontend).
@@ -146,6 +191,7 @@ Your app will be available at:
 
 ## TODOs
 
+- Add instructions for setting up the production deployment
 - Add Playwright tests
   - We'll probably want to set up a whole docker-compose.test.yml file for this to make it CI-friendly
 - Add more than Sentry for observability

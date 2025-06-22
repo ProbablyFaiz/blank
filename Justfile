@@ -4,6 +4,10 @@ default:
 
 # Install all dependencies
 install:
+    #!/usr/bin/env fish
+    uv tool install pre-commit
+    pre-commit install
+
     cd backend && uv venv --python 3.11 && uv sync
     cd frontend && pnpm install
 
@@ -46,6 +50,10 @@ test-frontend *ARGS:
 
 test-backend *ARGS:
     cd backend && uv run pytest {{ARGS}}
+
+test-all:
+    just test-frontend
+    just test-backend
 
 # Generate a migration with the provided message
 migrate *ARGS:
