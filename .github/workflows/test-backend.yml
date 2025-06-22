@@ -34,7 +34,8 @@ jobs:
         run: cd backend && uv run pytest
         env:
           DATA_ROOT: /tmp
-          POSTGRES_USER: postgres
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
-          POSTGRES_DB: blank
+          BLANK_ADMIN_PG_USER: postgres
+          BLANK_API_PG_USER: postgres
+          BLANK_PG_HOST: localhost
+          BLANK_PG_PORT: 5432
+          BLANK_PG_DB: blank
