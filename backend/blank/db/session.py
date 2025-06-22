@@ -9,11 +9,11 @@ PG_HOST = rl.utils.io.getenv("BLANK_PG_HOST")
 PG_PORT = rl.utils.io.getenv("BLANK_PG_PORT")
 PG_DB = rl.utils.io.getenv("BLANK_PG_DB")
 
-ADMIN_PG_USER = rl.utils.io.getenv("BLANK_ADMIN_PG_USER")
-ADMIN_PG_PASSWORD = rl.utils.io.getenv("BLANK_ADMIN_PG_PASSWORD")
+PG_ADMIN_USER = rl.utils.io.getenv("BLANK_PG_ADMIN_USER")
+PG_ADMIN_PASSWORD = rl.utils.io.getenv("BLANK_PG_ADMIN_PASSWORD")
 
-API_PG_USER = rl.utils.io.getenv("BLANK_API_PG_USER")
-API_PG_PASSWORD = rl.utils.io.getenv("BLANK_API_PG_PASSWORD")
+PG_API_USER = rl.utils.io.getenv("BLANK_PG_API_USER")
+PG_API_PASSWORD = rl.utils.io.getenv("BLANK_PG_API_PASSWORD")
 
 
 def get_postgres_uri(
@@ -32,7 +32,7 @@ def get_postgres_uri(
         ]
     ):
         raise ValueError(
-            "You must provide env variables BLANK_PG_HOST, BLANK_PG_PORT, BLANK_{ADMIN/API}_PG_USER, BLANK_{ADMIN/API}_PG_PASSWORD, BLANK_PG_DB."
+            "You must provide env variables BLANK_PG_HOST, BLANK_PG_PORT, BLANK_PG_{ADMIN,API}_USER, BLANK_PG_{ADMIN,API}_PASSWORD, BLANK_PG_DB."
         )
 
     postgres_password = quote_plus(postgres_password or "")
@@ -58,15 +58,15 @@ ADMIN_POSTGRES_URI = get_postgres_uri(
     postgres_host=PG_HOST,
     postgres_port=PG_PORT,
     postgres_db=PG_DB,
-    postgres_user=ADMIN_PG_USER,
-    postgres_password=ADMIN_PG_PASSWORD,
+    postgres_user=PG_ADMIN_USER,
+    postgres_password=PG_ADMIN_PASSWORD,
 )
 API_POSTGRES_URI = get_postgres_uri(
     postgres_host=PG_HOST,
     postgres_port=PG_PORT,
     postgres_db=PG_DB,
-    postgres_user=API_PG_USER,
-    postgres_password=API_PG_PASSWORD,
+    postgres_user=PG_API_USER,
+    postgres_password=PG_API_PASSWORD,
 )
 
 

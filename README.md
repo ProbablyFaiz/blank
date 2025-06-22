@@ -125,10 +125,13 @@ Your app will be available at:
   - Word for the wise: upgrade with extreme caution. It seems like every release has significant breaking changes.
 
 **Backend:**
-- [FastAPI](https://fastapi.tiangolo.com/) with async/await support
+- [FastAPI](https://fastapi.tiangolo.com/)
 - [SQLAlchemy](https://www.sqlalchemy.org/) 2.x ORM + [Alembic](https://alembic.sqlalchemy.org/en/latest/) migrations
 - [PostgreSQL](https://www.postgresql.org/) database
 - [Pydantic](https://docs.pydantic.dev/) 2.x for data validation
+
+**Observability:**
+- [Sentry](https://sentry.io/) for error tracking on both frontend and backend (optional)
 
 **Tools:**
 - [just](https://github.com/casey/just) for task automation
@@ -139,3 +142,13 @@ Your app will be available at:
 **Production Deployment:**
 - Docker/Docker Compose for building and running the application
 - Cloudflare Tunnel acts as a reverse proxy for the application to expose it to the internet
+
+
+## TODOs
+
+- Add Playwright tests
+  - We'll probably want to set up a whole docker-compose.test.yml file for this to make it CI-friendly
+- Add more than Sentry for observability
+- Add some kind of optional auth boilerplate
+- Refactor `rl` library to accept a `RL_ENV_PREFIX` environment (e.g. `RL_ENV_PREFIX=BLANK_`) so that we can place
+  bucket and Postgres utils in that package rather than copy-pasting them into each project via a template
