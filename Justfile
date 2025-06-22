@@ -36,12 +36,12 @@ shadd *ARGS:
     cd frontend && pnpm dlx shadcn@latest add {{ARGS}}
 
 
-test-frontend:
-    cd frontend && pnpm test:run
+test-frontend *ARGS:
+    cd frontend && pnpm test:run {{ARGS}}
 
 
-test-backend:
-    cd backend && uv run pytest
+test-backend *ARGS:
+    cd backend && uv run pytest {{ARGS}}
 
 # Generate a migration with the provided message
 migrate *ARGS:

@@ -6,8 +6,11 @@ alwaysApply: true
 ## Commands
 - Run all tests: `cd backend && pytest`
 - Run frontend typechecking: `just typecheck`
-- Run pytest tests: `just pytest`
-- Run single test: `cd backend && uv run pytest test/path/to/test_file.py::TestClass::test_function -v`
+- Run backend (Python) tests: `just test-backend`
+    - Run single test file: `just test-backend <path to test file relative to backend/>` e.g., `just test-backend test/api/test_tasks_api.py`
+- Run frontend (TS) tests: `just test-frontend`
+    - Run single test file: `just test-frontend <path to test file relative to frontend/>` e.g., `just test-frontend src/features/home/HomePage.test.tsx`
+
 - Format code: `just lint`
   - Often helpful to run this after making large code changes.
 - Generate OpenAPI client: `just openapi` (regenerates frontend/src/client from running API)

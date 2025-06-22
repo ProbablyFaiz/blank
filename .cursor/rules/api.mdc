@@ -1,5 +1,5 @@
 ---
-description: start_api
+description: api
 globs: backend/blank/api/**/*
 alwaysApply: false
 ---

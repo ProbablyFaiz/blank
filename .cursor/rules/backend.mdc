@@ -1,5 +1,5 @@
 ---
-description: start_python_backend
+description: python_backend
 globs: backend/**/*
 alwaysApply: false
 ---
@@ -23,7 +23,6 @@ alwaysApply: false
     - `rl` has (among others) the following IO functions, usable within `import rl.utils.io` (do not `from import`, use the absolute import):
         - `def get_data_path(*args) -> Path` — Generally, whenever a CLI script deals with input and output files/dirs, the default paths (which should typically be configurable via CLI options) are set on some subpath of the data path. E.g. `_DEFAULT_OUTPUT_DIR = rl.utils.io.get_data_path("raw_codes", "sf")`.
         - `def read_jsonl(filename: str | Path) -> Iterable[Any]` — yield an iterable of JSON-parsed items from a JSONL file, used as `for record in rl.utils.io.read_jsonl(...):` etc.
-        - `def write_jsonl(filename: str | Path, records: Iterable[Any], overwrite=False) -> None` — write an iterable of records (either json-serializable records or Pydantic models) to the given path until exhaustion. Note that the filepath comes first.
         - `def download(url: str, dest: str | Path) -> None` — Downloads a given url to a file with a progress bar, so when doing pure downloads this is preferable.
 - When creating click CLIs, obey the following conventions:
     - Unless otherwise instructed, prefer options, not arguments. Provide concise and descriptive help text for each option. Provide both a long (--foo) and short (-f) for all options unless doing so would lead to a conflict.
