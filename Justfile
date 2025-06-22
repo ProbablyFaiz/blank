@@ -9,7 +9,7 @@ install:
     pre-commit install
 
     cd backend && uv venv --python 3.11 && uv sync
-    cd frontend && pnpm install
+    cd ../frontend && pnpm install
 
 # Start the FastAPI backend development server
 api *ARGS:
