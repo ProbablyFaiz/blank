@@ -1,5 +1,12 @@
 # Blank Template
 
+## Remaining TODOs
+
+To complete this template:
+- Add some kind of structured logging, observability, and metrics stack
+- End-to-end Playwright tests
+
+
 A full-stack template with a React frontend and FastAPI backend.
 
 ## Prerequisites

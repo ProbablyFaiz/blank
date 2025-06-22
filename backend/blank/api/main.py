@@ -89,6 +89,7 @@ def create_task(task: TaskCreate, db: Annotated[Session, Depends(get_db)]):
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
+
     return db_task
 
 
@@ -113,11 +114,14 @@ def update_task(
     task: Annotated[Task, Depends(get_task)],
     db: Annotated[Session, Depends(get_db)],
 ):
-    for field, value in task_update.model_dump(exclude_unset=True).items():
+    update_fields = task_update.model_dump(exclude_unset=True)
+
+    for field, value in update_fields.items():
         setattr(task, field, value)
 
     db.commit()
     db.refresh(task)
+
     return task
 
 
