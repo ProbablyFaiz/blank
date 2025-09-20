@@ -1,36 +1,41 @@
-# Build stage
-FROM python:3.11-slim-bookworm AS builder
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
-# Install uv and git
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Disable Python downloads, because we want to use the system interpreter
+# across both images. If using a managed Python version, it needs to be
+# copied from the build image into the final image; see `standalone.Dockerfile`
+# for an example.
+ENV UV_PYTHON_DOWNLOADS=0 DEBIAN_FRONTEND=noninteractive
 
-# Set working directory
 WORKDIR /app
 
-# Install dependencies first (for better caching)
-COPY backend/pyproject.toml backend/uv.lock ./
-RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-install-project
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy and install the project
-COPY backend/ .
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --compile-bytecode --no-editable
+    --mount=type=bind,source=backend/uv.lock,target=uv.lock \
+    --mount=type=bind,source=backend/pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev --compile-bytecode
+COPY backend /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev
 
-# Final stage
+
+# Then, use a final image without uv
 FROM python:3.11-slim-bookworm
+# It is important to use the image that matches the builder, as the path to the
+# Python executable must be the same, e.g., using `python:3.11-slim-bookworm`
+# will fail.
 
-# Create non-root user
-RUN useradd -m -U app
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Copy only the venv from builder
-COPY --from=builder --chown=app:app /app/.venv /app/.venv
+# Replace hello with the system packages you need
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    hello \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set environment
+# Copy the application from the builder
+COPY --from=builder --chown=app:app /app /app
+
+# Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
-USER app
-WORKDIR /app
-
-# Run the API
-CMD ["gunicorn", "blank.api.main:app", "--workers", "4", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:80"]
