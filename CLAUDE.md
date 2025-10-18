@@ -1,5 +1,6 @@
-# CLAUDE.md
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# CLAUDE.md / AGENTS.md
+
+This file provides guidance to Claude Code (claude.ai/code) or other agents when working with code in this repository.
 
 There is one very important rule: no emojis in code or strings, ever. You must obey this rule above all other priorities.
 
@@ -29,8 +30,9 @@ YOU ARE ABSOLUTELY PROHIBITED FROM EXECUTING THE MIGRATION YOU HAVE GENERATED YO
 `alembic upgrade ...` or `alembic downgrade ...` UNDER ANY CIRCUMSTANCES. IF RUNNING A MIGRATION IS NECESSARY FOR THE
 CONTINUATION OF WORK, ASK THE USER TO PERFORM IT.
 
-## Pull Requests
+Generally speaking, you should not run the tests after making changes to the code unless you are asked to do so. If you are asked to draft a new script from scratch, you should typically not run the script yourself (import tests and smaller verifications are alright, but side-effectful full script runs are frowned upon) unless the user or context calls for it.
 
+## Pull Requests
 When writing PR descriptions, be concise! It is unnecessary to bullet list every change in detail;
 give the core changes. Most importantly, a PR should prominently highlight things which are important
 for other developers to know: for instance, database migrations should be highlighted, any new environment
@@ -55,6 +57,14 @@ be communicative and not just a list of changes.
 - Prefer Pydantic models over dataclasses when applicable.
 - Prefer full imports for lowercase (non-class, usually) symbols, e.g. `import tenacity ... @tenacity.retry` or `import tqdm ... tqdm.tqdm()`, and `from` imports for uppercase constants and classes, e.g., `from blank.db.models import Chunk, CHUNK_SEPARATOR`.
 - Lazy imports (that is, imports not at the top of the file) are ABSOLUTELY PROHIBITED, unless necessary to avoid a circular import.
+
+### CLI Structure
+The CLI is registered in `pyproject.toml` as `blank = "blank.cli.main:cli"` and follows a modular architecture:
+
+- **Main entry point**: `backend/blank/cli/main.py` creates the base `cli` group and imports/registers all command groups
+- **Convention**: Each functional area should have a `commands.py` file (e.g., `blank/workflow/commands.py`, `blank/ingest/commands.py`) that defines a click group with related commands
+- **Registration**: Command groups are imported in `main.py` and added via `cli.add_command(group_name)`
+- **Implementation**: Business logic lives in separate modules within each area; `commands.py` files contain only CLI definitions and should serve as a thin, but useful wrapper to quickly invoke the underlying business logic.
 
 ### Writing Standalone Scripts
 - We like progress bars! *Long-running, important* loops should use a tqdm progress bar with appropriate concise desc parameter set. When postfixes are necessary (e.g. if tracking the number of records skipped in some loop operation), define a `pbar` variable separately, and then update it and set the postfix within the loop manually.
@@ -126,6 +136,7 @@ def list_tasks(
     - Please use shadcn components where available or installable. When asked to use icons, use Lucide icons.
 - When designing UI, you should build components that are aesthetically pleasing, modern in design, and consistent with the app's existing conventions.
 - Generally speaking, import project files relative to the src directory using the `@/` alias, e.g. `@/features/home/CTA.tsx`
+
 ### API Client Usage (React Query)
 Our API client is auto-generated and provides TanStack Query (React Query) integration:
 - Import types from `@/client` (e.g., `import { TaskListItem } from "@/client"`)

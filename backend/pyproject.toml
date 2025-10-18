@@ -47,6 +47,9 @@ rl = { git = "https://github.com/ProbablyFaiz/rl.git" }
 [project.urls]
 homepage = "https://github.com/ProbablyFaiz/blank"
 
+[project.scripts]
+blank = "blank.cli.main:cli"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
