@@ -27,6 +27,8 @@ dependencies = [
     "alembic-utils>=0.8.8",
     "structlog>=25.4.0",
     "sentry-sdk[celery,fastapi,sqlalchemy]>=2.30.0",
+    "geoalchemy2>=0.18.0",
+    "pytz>=2025.2",
 ]
 
 [dependency-groups]

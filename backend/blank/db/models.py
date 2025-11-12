@@ -5,6 +5,7 @@ from enum import StrEnum
 
 import sqlalchemy as sa
 from sqlalchemy import String
+from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -17,18 +18,17 @@ class Base(DeclarativeBase):
 
 
 class TimestampMixin:
-    created_at: Mapped[datetime.datetime] = mapped_column(server_default=sa.func.now())
-    updated_at: Mapped[datetime.datetime] = mapped_column(
-        server_default=sa.func.now(), server_onupdate=sa.func.now()
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        TIMESTAMP(timezone=True),
+        default=lambda: datetime.datetime.now(datetime.UTC),
     )
 
 
 class IndexedTimestampMixin:
     created_at: Mapped[datetime.datetime] = mapped_column(
-        server_default=sa.func.now(), index=True
-    )
-    updated_at: Mapped[datetime.datetime] = mapped_column(
-        server_default=sa.func.now(), server_onupdate=sa.func.now(), index=True
+        TIMESTAMP(timezone=True),
+        default=lambda: datetime.datetime.now(datetime.UTC),
+        index=True,
     )
 
 

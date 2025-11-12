@@ -2,10 +2,11 @@ from logging.config import fileConfig
 
 from alembic import context
 from alembic_utils.replaceable_entity import register_entities
+from geoalchemy2 import alembic_helpers
 
 from blank.db.models import Base
 from blank.db.pg_objects import PG_OBJECTS
-from blank.db.session import ADMIN_POSTGRES_URI, get_engine
+from blank.db.session import get_admin_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -37,7 +38,9 @@ def include_object(obj, name, obj_type, reflected, compare_to):
         return False
     if obj_type == "grant_table":
         return False
-    return True
+    if name in ("public.geography_columns", "public.geometry_columns"):
+        return False
+    return alembic_helpers.include_object(obj, name, obj_type, reflected, compare_to)
 
 
 def run_migrations_offline() -> None:
@@ -62,12 +65,13 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-
-    with get_engine(ADMIN_POSTGRES_URI).connect() as connection:
+    with get_admin_engine().connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
             include_object=include_object,
+            process_revision_directives=alembic_helpers.writer,
+            render_item=alembic_helpers.render_item,
         )
 
         with context.begin_transaction():
