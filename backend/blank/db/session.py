@@ -2,6 +2,7 @@ from urllib.parse import quote_plus
 
 import rl.utils.io
 import sqlalchemy as sa
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import QueuePool
 
@@ -54,34 +55,75 @@ def get_engine(postgres_uri: str):
     )
 
 
-ADMIN_POSTGRES_URI = get_postgres_uri(
-    postgres_host=PG_HOST,
-    postgres_port=PG_PORT,
-    postgres_db=PG_DB,
-    postgres_user=PG_ADMIN_USER,
-    postgres_password=PG_ADMIN_PASSWORD,
-)
-API_POSTGRES_URI = get_postgres_uri(
-    postgres_host=PG_HOST,
-    postgres_port=PG_PORT,
-    postgres_db=PG_DB,
-    postgres_user=PG_API_USER,
-    postgres_password=PG_API_PASSWORD,
-)
+_ADMIN_POSTGRES_URI: str | None = None
+_API_POSTGRES_URI: str | None = None
+
+_ADMIN_SESSION_LOCAL: sessionmaker | None = None
+_API_SESSION_LOCAL: sessionmaker | None = None
+
+_ADMIN_ENGINE: Engine | None = None
+_API_ENGINE: Engine | None = None
 
 
-ADMIN_ENGINE = get_engine(ADMIN_POSTGRES_URI)
-API_ENGINE = get_engine(API_POSTGRES_URI)
+def get_admin_postgres_uri() -> str:
+    global _ADMIN_POSTGRES_URI
+    if _ADMIN_POSTGRES_URI is None:
+        _ADMIN_POSTGRES_URI = get_postgres_uri(
+            postgres_host=PG_HOST,
+            postgres_port=PG_PORT,
+            postgres_db=PG_DB,
+            postgres_user=PG_ADMIN_USER,
+            postgres_password=PG_ADMIN_PASSWORD,
+        )
+    return _ADMIN_POSTGRES_URI
 
-AdminSessionLocal = sessionmaker(bind=ADMIN_ENGINE)
-ApiSessionLocal = sessionmaker(bind=API_ENGINE)
+
+def get_api_postgres_uri() -> str:
+    global _API_POSTGRES_URI
+    if _API_POSTGRES_URI is None:
+        _API_POSTGRES_URI = get_postgres_uri(
+            postgres_host=PG_HOST,
+            postgres_port=PG_PORT,
+            postgres_db=PG_DB,
+            postgres_user=PG_API_USER,
+            postgres_password=PG_API_PASSWORD,
+        )
+    return _API_POSTGRES_URI
+
+
+def get_admin_engine() -> Engine:
+    global _ADMIN_ENGINE
+    if _ADMIN_ENGINE is None:
+        _ADMIN_ENGINE = get_engine(get_admin_postgres_uri())
+    return _ADMIN_ENGINE
+
+
+def get_admin_sessionmaker() -> sessionmaker:
+    global _ADMIN_SESSION_LOCAL
+    if _ADMIN_SESSION_LOCAL is None:
+        _ADMIN_SESSION_LOCAL = sessionmaker(bind=get_admin_engine())
+    return _ADMIN_SESSION_LOCAL
+
+
+def get_api_engine() -> Engine:
+    global _API_ENGINE
+    if _API_ENGINE is None:
+        _API_ENGINE = get_engine(get_api_postgres_uri())
+    return _API_ENGINE
+
+
+def get_api_sessionmaker() -> sessionmaker:
+    global _API_SESSION_LOCAL
+    if _API_SESSION_LOCAL is None:
+        _API_SESSION_LOCAL = sessionmaker(bind=get_api_engine())
+    return _API_SESSION_LOCAL
 
 
 def get_session() -> Session:
     """Get a new admin session. Caller is responsible for closing."""
-    return AdminSessionLocal()
+    return get_admin_sessionmaker()()
 
 
 def get_api_session() -> Session:
     """Get a new API session. Caller is responsible for closing."""
-    return ApiSessionLocal()
+    return get_api_sessionmaker()()

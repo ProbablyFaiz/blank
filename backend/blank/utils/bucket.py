@@ -62,16 +62,48 @@ def list_bucket_files(prefix: str, client: boto3.client) -> set[str]:
 
 
 def get_signed_url(
-    s3_path: str, client: boto3.client, *, download_file_name: str | None = None
+    s3_path: str,
+    client: boto3.client,
+    *,
+    download_file_name: str | None = None,
+    ttl: int = 3600,
+    verb: str = "get_object",
+    inline: bool = False,
 ) -> str:
+    """
+    Get a presigned URL for a file in the bucket.
+
+    Args:
+        s3_path: The path to the file in the bucket.
+        client: The boto3 client to use.
+        download_file_name: The name of the file to download.
+        ttl: The time to live for the presigned URL in seconds.
+        verb: The HTTP verb to use for the presigned URL.
+        inline: If True, set content disposition to inline for browser viewing.
+                If False, set to attachment for download.
+
+    Returns:
+        A presigned URL for the file.
+    """
     if download_file_name is None:
         download_file_name = s3_path.split("/")[-1]
-    return client.generate_presigned_url(
-        "get_object",
+    extra_params = {}
+    if verb == "get_object":
+        if inline:
+            extra_params["ResponseContentDisposition"] = (
+                f"inline; filename={urllib.parse.quote(download_file_name)}"
+            )
+        else:
+            extra_params["ResponseContentDisposition"] = (
+                f"attachment; filename={urllib.parse.quote(download_file_name)}"
+            )
+    url = client.generate_presigned_url(
+        verb,
         Params={
             "Bucket": BUCKET_NAME,
             "Key": s3_path,
-            "ResponseContentDisposition": f"attachment; filename={urllib.parse.quote(download_file_name)}",
+            **extra_params,
         },
-        ExpiresIn=3600,
+        ExpiresIn=ttl,
     )
+    return url
