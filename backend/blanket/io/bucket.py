@@ -3,13 +3,14 @@ import urllib.parse
 from pathlib import Path
 
 import boto3
-import rl.utils.io
 
-BUCKET_NAME = rl.utils.io.getenv("BLANK_BUCKET_NAME")
-BUCKET_ACCESS_KEY_ID = rl.utils.io.getenv("BLANK_BUCKET_ACCESS_KEY_ID")
-BUCKET_SECRET_ACCESS_KEY = rl.utils.io.getenv("BLANK_BUCKET_SECRET_ACCESS_KEY")
-BUCKET_ENDPOINT = rl.utils.io.getenv("BLANK_BUCKET_ENDPOINT")
-BUCKET_REGION = rl.utils.io.getenv("BLANK_BUCKET_REGION")
+import blanket.io.env as env
+
+BUCKET_NAME = env.getenv("BLANKET_BUCKET_NAME")
+BUCKET_ACCESS_KEY_ID = env.getenv("BLANKET_BUCKET_ACCESS_KEY_ID")
+BUCKET_SECRET_ACCESS_KEY = env.getenv("BLANKET_BUCKET_SECRET_ACCESS_KEY")
+BUCKET_ENDPOINT = env.getenv("BLANKET_BUCKET_ENDPOINT")
+BUCKET_REGION = env.getenv("BLANKET_BUCKET_REGION")
 
 
 def get_bucket_client() -> boto3.client:

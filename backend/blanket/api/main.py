@@ -11,40 +11,40 @@ from fastapi import Depends, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from blank.api.deps import get_db, get_task
-from blank.api.interfaces import (
+from blanket.api.deps import get_db, get_task
+from blanket.api.interfaces import (
     PaginatedBase,
     TaskCreate,
     TaskListItem,
     TaskRead,
     TaskUpdate,
 )
-from blank.db.models import Task, TaskPriority
-from blank.jobs.celery import celery_app
-from blank.utils.observe import safe_init_sentry
+from blanket.db.models import Task, TaskPriority
+from blanket.io.env import BLANKET_ENV
+from blanket.io.log import safe_init_sentry
 
 safe_init_sentry()
 
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+APP_KWARGS = {}
+
+if BLANKET_ENV != "dev":
+    APP_KWARGS["openapi_url"] = None
+
+app = FastAPI(**APP_KWARGS)
+
+if BLANKET_ENV == "dev":
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
 
 @app.get("/health")
 def health():
-    celery_app.send_task("blank.jobs.tasks.healthy_job")
     return {"status": "ok"}
-
-
-@app.get("/error")
-def error():
-    celery_app.send_task("blank.jobs.tasks.error_job")
-    raise Exception("Test error")
 
 
 @app.get(

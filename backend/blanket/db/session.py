@@ -1,20 +1,19 @@
 from urllib.parse import quote_plus
 
-import rl.utils.io
 import sqlalchemy as sa
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import QueuePool
 
-PG_HOST = rl.utils.io.getenv("BLANK_PG_HOST")
-PG_PORT = rl.utils.io.getenv("BLANK_PG_PORT")
-PG_DB = rl.utils.io.getenv("BLANK_PG_DB")
+import blanket.io.env as env
 
-PG_ADMIN_USER = rl.utils.io.getenv("BLANK_PG_ADMIN_USER")
-PG_ADMIN_PASSWORD = rl.utils.io.getenv("BLANK_PG_ADMIN_PASSWORD")
-
-PG_API_USER = rl.utils.io.getenv("BLANK_PG_API_USER")
-PG_API_PASSWORD = rl.utils.io.getenv("BLANK_PG_API_PASSWORD")
+PG_HOST = env.getenv("BLANKET_PG_HOST")
+PG_PORT = env.getenv("BLANKET_PG_PORT")
+PG_DB = env.getenv("BLANKET_PG_DB")
+PG_ADMIN_USER = env.getenv("BLANKET_PG_ADMIN_USER")
+PG_ADMIN_PASSWORD = env.getenv("BLANKET_PG_ADMIN_PASSWORD")
+PG_API_USER = env.getenv("BLANKET_PG_API_USER")
+PG_API_PASSWORD = env.getenv("BLANKET_PG_API_PASSWORD")
 
 
 def get_postgres_uri(
@@ -33,7 +32,7 @@ def get_postgres_uri(
         ]
     ):
         raise ValueError(
-            "You must provide env variables BLANK_PG_HOST, BLANK_PG_PORT, BLANK_PG_{ADMIN,API}_USER, BLANK_PG_{ADMIN,API}_PASSWORD, BLANK_PG_DB."
+            "You must provide env variables BLANKET_PG_HOST, BLANKET_PG_PORT, BLANKET_PG_{ADMIN,API}_USER, BLANKET_PG_{ADMIN,API}_PASSWORD, BLANKET_PG_DB."
         )
 
     postgres_password = quote_plus(postgres_password or "")
@@ -46,7 +45,7 @@ def get_postgres_uri(
 def get_engine(postgres_uri: str):
     return sa.create_engine(
         postgres_uri,
-        echo=rl.utils.io.getenv("SA_ECHO", "0") == "1",
+        echo=env.getenv("BLANKET_SA_ECHO", "0") == "1",
         poolclass=QueuePool,
         pool_size=5,
         max_overflow=10,

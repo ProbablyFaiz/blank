@@ -4,9 +4,9 @@ from alembic import context
 from alembic_utils.replaceable_entity import register_entities
 from geoalchemy2 import alembic_helpers
 
-from blank.db.models import Base
-from blank.db.pg_objects import PG_OBJECTS
-from blank.db.session import get_admin_engine
+from blanket.db.models import Base
+from blanket.db.pg_objects import PG_OBJECTS
+from blanket.db.session import get_admin_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

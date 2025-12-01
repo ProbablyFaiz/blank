@@ -6,9 +6,9 @@ from pytest_postgresql import factories
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from blank.api.deps import get_db
-from blank.api.main import app
-from blank.db.models import Base
+from blanket.api.deps import get_db
+from blanket.api.main import app
+from blanket.db.models import Base
 
 # Create a PostgreSQL test database factory
 postgresql_proc = factories.postgresql_proc(

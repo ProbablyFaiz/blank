@@ -1,8 +1,8 @@
 from celery import Celery, signals
 
-from blank.db.redis import get_redis_url
-from blank.jobs.schedule import BEAT_SCHEDULE
-from blank.utils.observe import safe_init_sentry
+from blanket.db.redis import get_redis_url
+from blanket.io.log import safe_init_sentry
+from blanket.jobs.schedule import BEAT_SCHEDULE
 
 
 @signals.celeryd_init.connect
@@ -11,7 +11,7 @@ def init_sentry(**_kwargs):
 
 
 def get_celery_app() -> Celery:
-    app = Celery("blank", broker=get_redis_url(), include=["blank.jobs.tasks"])
+    app = Celery("blanket", broker=get_redis_url(), include=["blanket.jobs.tasks"])
 
     # Configure Celery
     app.conf.update(

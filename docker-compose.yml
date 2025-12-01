@@ -7,17 +7,17 @@ services:
       - TUNNEL_TOKEN=${CLOUDFLARED_TUNNEL_TOKEN}
     depends_on:
       - traefik
-    container_name: blank-cloudflared
+    container_name: blanket-cloudflared
 
   api:
-    container_name: blank-api
+    container_name: blanket-api
     build:
       context: .
       dockerfile: backend/Dockerfile
     command:
       [
         "gunicorn",
-        "blank.api.main:app",
+        "blanket.api.main:app",
         "--workers",
         "4",
         "--worker-class",
@@ -26,7 +26,7 @@ services:
         "0.0.0.0:80",
       ]
     volumes:
-      - blank_data:/data
+      - blanket_data:/data
     environment:
       - DATA_ROOT=/data
       - RL_DEBUG=0
@@ -46,16 +46,16 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    command: ["celery", "-A", "blank.jobs.celery:celery_app", "worker", "--beat", "--loglevel=info"]
+    command: ["celery", "-A", "blanket.jobs.celery:celery_app", "worker", "--beat", "--loglevel=info"]
     volumes:
-      - blank_data:/data
+      - blanket_data:/data
     environment:
       - DATA_ROOT=/data
       - RL_DEBUG=0
       - TZ=America/Los_Angeles
     env_file:
       - prod.env
-    container_name: blank-celery
+    container_name: blanket-celery
     restart: unless-stopped
 
   frontend:
@@ -63,8 +63,8 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        - BLANK_API_URL=/api
-    container_name: blank-frontend
+        - BLANKET_API_URL=/api
+    container_name: blanket-frontend
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
@@ -76,7 +76,7 @@ services:
 
   traefik:
     image: traefik:v3.2
-    container_name: blank-traefik
+    container_name: blanket-traefik
     restart: unless-stopped
     command:
       - "--providers.docker=true"
@@ -91,5 +91,5 @@ services:
       - frontend
 
 volumes:
-  blank_data:
+  blanket_data:
     driver: local

@@ -1,12 +1,12 @@
 import logging
 import sys
 
-import rl.utils.io
 import sentry_sdk
 import structlog
 
-SENTRY_DSN = rl.utils.io.getenv("BLANK_SENTRY_DSN")
-BLANK_ENV = rl.utils.io.getenv("BLANK_ENV", "dev")
+import blanket.io.env as env
+
+SENTRY_DSN = env.getenv("BLANKET_BACKEND_SENTRY_DSN")
 
 
 def configure_logging():
@@ -51,7 +51,9 @@ LOGGER = structlog.get_logger()
 
 def safe_init_sentry():
     if not SENTRY_DSN:
-        LOGGER.warning("SENTRY_DSN is not set, skipping sentry initialization")
+        LOGGER.warning(
+            "MESA_BACKEND_SENTRY_DSN is not set, skipping sentry initialization"
+        )
         return
 
-    sentry_sdk.init(dsn=SENTRY_DSN, send_default_pii=True, environment=BLANK_ENV)
+    sentry_sdk.init(dsn=SENTRY_DSN, send_default_pii=True, environment=env.BLANKET_ENV)

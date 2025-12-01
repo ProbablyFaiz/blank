@@ -1,4 +1,4 @@
-# Blank Template
+# Blanket Template
 
 A full-stack template with a React frontend and FastAPI backend.
 
@@ -19,13 +19,13 @@ For deployment:
 ### 1. Clone and Customize
 
 ```bash
-git clone https://github.com/ProbablyFaiz/blank.git <your-project-name>
+git clone https://github.com/ProbablyFaiz/blanket.git <your-project-name>
 cd <your-project-name>
 ```
 
 **Customize the project name:**
 - Recommended: Use VSCode's find/replace (Ctrl+Shift+H) with "Preserve Case" enabled
-- Replace all instances of `blank` with your project name
+- Replace all instances of `blanket` with your project name
 - Update `backend/pyproject.toml` project name and description
 - Update `frontend/package.json` name field
 
@@ -135,7 +135,7 @@ TODO
 
 ```
 ├── backend/           # FastAPI backend
-│   ├── blank/         # Main package (rename this!)
+│   ├── blanket/         # Main package (rename this!)
 │   │   ├── api/       # API routes & endpoints
 │   │   ├── db/        # Database models, sessions & migrations
 │   │   ├── jobs/      # Background job processing (Celery)
@@ -196,5 +196,5 @@ TODO
   - We'll probably want to set up a whole docker-compose.test.yml file for this to make it CI-friendly
 - Add more than Sentry for observability
 - Add some kind of optional auth boilerplate
-- Refactor `rl` library to accept a `RL_ENV_PREFIX` environment (e.g. `RL_ENV_PREFIX=BLANK_`) so that we can place
+- Refactor `rl` library to accept a `RL_ENV_PREFIX` environment (e.g. `RL_ENV_PREFIX=BLANKET_`) so that we can place
   bucket and Postgres utils in that package rather than copy-pasting them into each project via a template

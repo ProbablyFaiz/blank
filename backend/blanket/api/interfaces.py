@@ -4,7 +4,7 @@ from typing import Generic, TypeVar
 
 from pydantic import BaseModel, ConfigDict, computed_field
 
-from blank.db.models import TaskPriority
+from blanket.db.models import TaskPriority
 
 
 class ApiModel(BaseModel):
