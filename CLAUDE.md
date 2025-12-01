@@ -52,7 +52,16 @@ be communicative and not just a list of changes.
 - Pathlib Paths should be used over the equivalent os functions.
 - Use SQLAlchemy 2.x ORM syntax, not 1.x.
   - E.g., you should write queries as `db.execute(<query var or the query inline>).scalars().all()` instead of `db.query(Model).all()`.
-  - Some helpful context: my projects are typically structured such that models are in <project_name>.db.models, and you can create an admin session with `from <project_name>.db.session import get_admin_session` (e.g. `from blanket.db.session import get_admin_session`) and then `session = get_admin_session()`.
+- **Database sessions** (`blanket.db.session`): We use three Postgres credential levels:
+  - **superuser**: Sync engine for Alembic migrations. Use `get_superuser_engine()`.
+  - **admin**: Async engine/sessions for elevated app operations. Use `get_admin_session()`.
+  - **api**: Async engine/sessions for API requests (used via FastAPI deps). Use `get_api_session()`.
+
+  Sessions are async and should be used with `async with`:
+  ```python
+  async with get_admin_session() as session:
+      result = await session.execute(query)
+  ```
 - Use Pydantic 2.x syntax, not 1.x.
 - Prefer Pydantic models over dataclasses when applicable.
 - Prefer full imports for lowercase (non-class, usually) symbols, e.g. `import tenacity ... @tenacity.retry` or `import tqdm ... tqdm.tqdm()`, and `from` imports for uppercase constants and classes, e.g., `from blanket.db.models import Chunk, CHUNK_SEPARATOR`.
@@ -150,6 +159,7 @@ def list_tasks(
     - Please use shadcn components where available or installable. When asked to use icons, use Lucide icons.
 - When designing UI, you should build components that are aesthetically pleasing, modern in design, and consistent with the app's existing conventions.
 - Generally speaking, import project files relative to the src directory using the `@/` alias, e.g. `@/features/home/CTA.tsx`
+- You must use `pnpm` rather than `yarn` or `npm` for package management, `dlx` commands, etc.
 
 ### API Client Usage (React Query)
 Our API client is auto-generated and provides TanStack Query (React Query) integration:

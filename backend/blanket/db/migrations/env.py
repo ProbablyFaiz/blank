@@ -6,7 +6,7 @@ from geoalchemy2 import alembic_helpers
 
 from blanket.db.models import Base
 from blanket.db.pg_objects import PG_OBJECTS
-from blanket.db.session import get_admin_engine
+from blanket.db.session import get_superuser_engine
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -65,7 +65,7 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    with get_admin_engine().connect() as connection:
+    with get_superuser_engine().connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,

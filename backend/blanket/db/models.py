@@ -4,12 +4,13 @@ import datetime
 from enum import StrEnum
 
 import sqlalchemy as sa
-from sqlalchemy import String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.dialects.postgresql import TIMESTAMP
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
     mapped_column,
+    relationship,
 )
 
 
@@ -36,9 +37,11 @@ class User(Base, IndexedTimestampMixin):
     __tablename__ = "app_users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    email: Mapped[str] = mapped_column(String(), unique=True)
-    auth0_sub: Mapped[str | None] = mapped_column(String(), unique=True)
-    display_name: Mapped[str | None] = mapped_column(String())
+    email: Mapped[str] = mapped_column(unique=True)
+    auth0_sub: Mapped[str | None] = mapped_column(unique=True)
+    display_name: Mapped[str | None] = mapped_column()
+
+    tasks: Mapped[list[Task]] = relationship(back_populates="creator")
 
 
 class TaskPriority(StrEnum):
@@ -51,7 +54,10 @@ class Task(Base, IndexedTimestampMixin):
     __tablename__ = "tasks"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    creator_id: Mapped[int] = mapped_column(ForeignKey("app_users.id"))
     title: Mapped[str] = mapped_column()
     description: Mapped[str | None] = mapped_column()
     completed: Mapped[bool] = mapped_column(server_default=sa.text("false"))
-    priority: Mapped[TaskPriority] = mapped_column(String())
+    priority: Mapped[TaskPriority] = mapped_column(String(255))
+
+    creator: Mapped[User] = relationship(back_populates="tasks")

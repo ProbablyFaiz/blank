@@ -56,7 +56,15 @@ tasks_user_policy = PGPolicy(
     USING (EXISTS (
         SELECT 1
         FROM app_users ua
-        WHERE ua.id = get_current_user() AND ua.id = tasks.user_id
+        WHERE ua.id = get_current_user() AND ua.id = tasks.creator_id
     ))
     """,
 )
+
+
+PG_OBJECTS = [
+    set_current_user_function,
+    get_current_user_function,
+    postgis_extension,
+    tasks_user_policy,
+]
