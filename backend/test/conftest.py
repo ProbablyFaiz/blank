@@ -6,7 +6,7 @@ from pytest_postgresql import factories
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
-from blanket.api.deps import get_db
+from blanket.api.deps import _get_db
 from blanket.api.main import app
 from blanket.db.models import Base
 
@@ -56,7 +56,7 @@ def client(db_session: Session) -> Generator[TestClient, None, None]:
     def override_get_db():
         yield db_session
 
-    app.dependency_overrides[get_db] = override_get_db
+    app.dependency_overrides[_get_db] = override_get_db
 
     with TestClient(app) as test_client:
         yield test_client

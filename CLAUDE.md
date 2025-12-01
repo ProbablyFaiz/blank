@@ -52,7 +52,7 @@ be communicative and not just a list of changes.
 - Pathlib Paths should be used over the equivalent os functions.
 - Use SQLAlchemy 2.x ORM syntax, not 1.x.
   - E.g., you should write queries as `db.execute(<query var or the query inline>).scalars().all()` instead of `db.query(Model).all()`.
-  - Some helpful context: my projects are typically structured such that models are in <project_name>.db.models, and you can create a session with `from <project_name>.db.session import get_session` (e.g. `from cdle.db.session`) and then `session = get_session()`.
+  - Some helpful context: my projects are typically structured such that models are in <project_name>.db.models, and you can create an admin session with `from <project_name>.db.session import get_admin_session` (e.g. `from blanket.db.session import get_admin_session`) and then `session = get_admin_session()`.
 - Use Pydantic 2.x syntax, not 1.x.
 - Prefer Pydantic models over dataclasses when applicable.
 - Prefer full imports for lowercase (non-class, usually) symbols, e.g. `import tenacity ... @tenacity.retry` or `import tqdm ... tqdm.tqdm()`, and `from` imports for uppercase constants and classes, e.g., `from blanket.db.models import Chunk, CHUNK_SEPARATOR`.

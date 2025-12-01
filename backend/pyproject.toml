@@ -32,6 +32,10 @@ dependencies = [
     "rich-click>=1.9.4",
     "tqdm>=4.67.1",
     "strenum>=0.4.15",
+    "types-aiobotocore>=2.26.0.post1",
+    "asyncpg>=0.31.0",
+    "uvloop>=0.22.1",
+    "fastapi-auth0",
 ]
 
 [dependency-groups]
@@ -78,3 +82,6 @@ markers = [
     "slow: marks tests as slow",
     "integration: marks tests as integration tests",
 ]
+
+[tool.uv.sources]
+fastapi-auth0 = { git = "https://github.com/calderapbc/fastapi-auth0", rev = "v0.6.0" }

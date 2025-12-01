@@ -11,7 +11,7 @@ from fastapi import Depends, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from blanket.api.deps import get_db, get_task
+from blanket.api.deps import _get_db, get_task
 from blanket.api.interfaces import (
     PaginatedBase,
     TaskCreate,
@@ -53,7 +53,7 @@ def health():
     operation_id="listTasks",
 )
 def list_tasks(
-    db: Annotated[Session, Depends(get_db)],
+    db: Annotated[Session, Depends(_get_db)],
     completed: bool | None = None,
     priority: TaskPriority | None = None,
     search: Annotated[str, Query()] | None = None,
@@ -100,7 +100,7 @@ def list_tasks(
     response_model=TaskRead,
     operation_id="createTask",
 )
-def create_task(task: TaskCreate, db: Annotated[Session, Depends(get_db)]):
+def create_task(task: TaskCreate, db: Annotated[Session, Depends(_get_db)]):
     db_task = Task(**task.model_dump())
     db.add(db_task)
     db.commit()
@@ -128,7 +128,7 @@ def read_task(
 def update_task(
     task_update: TaskUpdate,
     task: Annotated[Task, Depends(get_task)],
-    db: Annotated[Session, Depends(get_db)],
+    db: Annotated[Session, Depends(_get_db)],
 ):
     update_fields = task_update.model_dump(exclude_unset=True)
 
@@ -148,7 +148,7 @@ def update_task(
 )
 def delete_task(
     task: Annotated[Task, Depends(get_task)],
-    db: Annotated[Session, Depends(get_db)],
+    db: Annotated[Session, Depends(_get_db)],
 ):
     db.delete(task)
     db.commit()

@@ -1,9 +1,16 @@
+import asyncio
+import weakref
+from asyncio import AbstractEventLoop
+from dataclasses import dataclass
 from urllib.parse import quote_plus
 
-import sqlalchemy as sa
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.pool import QueuePool
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.pool import AsyncAdaptedQueuePool
 
 import blanket.io.env as env
 
@@ -22,7 +29,7 @@ def get_postgres_uri(
     postgres_user: str,
     postgres_password: str,
     postgres_db: str,
-):
+) -> str:
     if any(
         [
             not postgres_host,
@@ -37,16 +44,16 @@ def get_postgres_uri(
 
     postgres_password = quote_plus(postgres_password or "")
     return (
-        f"postgresql://{postgres_user}:{postgres_password}"
+        f"postgresql+asyncpg://{postgres_user}:{postgres_password}"
         f"@{postgres_host}:{postgres_port}/{postgres_db}"
     )
 
 
-def get_engine(postgres_uri: str):
-    return sa.create_engine(
+def _create_engine(postgres_uri: str) -> AsyncEngine:
+    return create_async_engine(
         postgres_uri,
         echo=env.getenv("BLANKET_SA_ECHO", "0") == "1",
-        poolclass=QueuePool,
+        poolclass=AsyncAdaptedQueuePool,
         pool_size=5,
         max_overflow=10,
         pool_timeout=30,
@@ -54,14 +61,21 @@ def get_engine(postgres_uri: str):
     )
 
 
+@dataclass
+class _LoopResources:
+    engine: AsyncEngine
+    sessionmaker: async_sessionmaker[AsyncSession]
+
+
+_admin_resources: weakref.WeakKeyDictionary[AbstractEventLoop, _LoopResources] = (
+    weakref.WeakKeyDictionary()
+)
+_api_resources: weakref.WeakKeyDictionary[AbstractEventLoop, _LoopResources] = (
+    weakref.WeakKeyDictionary()
+)
+
 _ADMIN_POSTGRES_URI: str | None = None
 _API_POSTGRES_URI: str | None = None
-
-_ADMIN_SESSION_LOCAL: sessionmaker | None = None
-_API_SESSION_LOCAL: sessionmaker | None = None
-
-_ADMIN_ENGINE: Engine | None = None
-_API_ENGINE: Engine | None = None
 
 
 def get_admin_postgres_uri() -> str:
@@ -90,39 +104,49 @@ def get_api_postgres_uri() -> str:
     return _API_POSTGRES_URI
 
 
-def get_admin_engine() -> Engine:
-    global _ADMIN_ENGINE
-    if _ADMIN_ENGINE is None:
-        _ADMIN_ENGINE = get_engine(get_admin_postgres_uri())
-    return _ADMIN_ENGINE
+def _get_admin_resources() -> _LoopResources:
+    loop = asyncio.get_running_loop()
+    if loop not in _admin_resources:
+        engine = _create_engine(get_admin_postgres_uri())
+        _admin_resources[loop] = _LoopResources(
+            engine=engine,
+            sessionmaker=async_sessionmaker(bind=engine, expire_on_commit=False),
+        )
+    return _admin_resources[loop]
 
 
-def get_admin_sessionmaker() -> sessionmaker:
-    global _ADMIN_SESSION_LOCAL
-    if _ADMIN_SESSION_LOCAL is None:
-        _ADMIN_SESSION_LOCAL = sessionmaker(bind=get_admin_engine())
-    return _ADMIN_SESSION_LOCAL
+def _get_api_resources() -> _LoopResources:
+    loop = asyncio.get_running_loop()
+    if loop not in _api_resources:
+        engine = _create_engine(get_api_postgres_uri())
+        _api_resources[loop] = _LoopResources(
+            engine=engine,
+            sessionmaker=async_sessionmaker(bind=engine, expire_on_commit=False),
+        )
+    return _api_resources[loop]
 
 
-def get_api_engine() -> Engine:
-    global _API_ENGINE
-    if _API_ENGINE is None:
-        _API_ENGINE = get_engine(get_api_postgres_uri())
-    return _API_ENGINE
+def get_admin_engine() -> AsyncEngine:
+    return _get_admin_resources().engine
 
 
-def get_api_sessionmaker() -> sessionmaker:
-    global _API_SESSION_LOCAL
-    if _API_SESSION_LOCAL is None:
-        _API_SESSION_LOCAL = sessionmaker(bind=get_api_engine())
-    return _API_SESSION_LOCAL
+def get_admin_sessionmaker() -> async_sessionmaker[AsyncSession]:
+    return _get_admin_resources().sessionmaker
 
 
-def get_session() -> Session:
-    """Get a new admin session. Caller is responsible for closing."""
+def get_api_engine() -> AsyncEngine:
+    return _get_api_resources().engine
+
+
+def get_api_sessionmaker() -> async_sessionmaker[AsyncSession]:
+    return _get_api_resources().sessionmaker
+
+
+def get_admin_session() -> AsyncSession:
+    """Get a new admin session. Use `async with` to ensure the session is closed."""
     return get_admin_sessionmaker()()
 
 
-def get_api_session() -> Session:
-    """Get a new API session. Caller is responsible for closing."""
+def get_api_session() -> AsyncSession:
+    """Get a new API session. Use `async with` to ensure the session is closed."""
     return get_api_sessionmaker()()

@@ -32,6 +32,15 @@ class IndexedTimestampMixin:
     )
 
 
+class User(Base, IndexedTimestampMixin):
+    __tablename__ = "app_users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(), unique=True)
+    auth0_sub: Mapped[str | None] = mapped_column(String(), unique=True)
+    display_name: Mapped[str | None] = mapped_column(String())
+
+
 class TaskPriority(StrEnum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
