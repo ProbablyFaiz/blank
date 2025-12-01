@@ -6,7 +6,10 @@ BLANK_REDIS_PORT = rl.utils.io.getenv("BLANK_REDIS_PORT")
 BLANK_REDIS_DB = rl.utils.io.getenv("BLANK_REDIS_DB")
 
 
-def get_redis_url() -> str:
+_redis_client: Redis | None = None
+
+
+def validate_redis_config() -> None:
     if any(
         [
             not BLANK_REDIS_HOST,
@@ -17,22 +20,20 @@ def get_redis_url() -> str:
         raise ValueError(
             "BLANK_REDIS_HOST, BLANK_REDIS_PORT, and BLANK_REDIS_DB must be set"
         )
+
+
+def get_redis_url() -> str:
+    validate_redis_config()
     return f"redis://{BLANK_REDIS_HOST}:{BLANK_REDIS_PORT}/{BLANK_REDIS_DB}"
 
 
 def get_redis_connection() -> Redis:
-    if any(
-        [
-            not BLANK_REDIS_HOST,
-            not BLANK_REDIS_PORT,
-            not BLANK_REDIS_DB,
-        ]
-    ):
-        raise ValueError(
-            "BLANK_REDIS_HOST, BLANK_REDIS_PORT, and BLANK_REDIS_DB must be set"
+    validate_redis_config()
+    global _redis_client
+    if _redis_client is None:
+        _redis_client = Redis(
+            host=BLANK_REDIS_HOST,
+            port=BLANK_REDIS_PORT,
+            db=BLANK_REDIS_DB,
         )
-    return Redis(
-        host=BLANK_REDIS_HOST,
-        port=BLANK_REDIS_PORT,
-        db=BLANK_REDIS_DB,
-    )
+    return _redis_client
