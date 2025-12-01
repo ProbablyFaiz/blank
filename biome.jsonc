@@ -5,19 +5,29 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "noUnusedImports": "error"
+        "noUnusedImports": "error",
+        "useExhaustiveDependencies": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noDocumentCookie": "off"
       },
       "style": {
         "noNonNullAssertion": "off"
+      },
+      "a11y": {
+        "useValidAnchor": "off",
+        "useFocusableInteractive": "off"
+      },
+      "complexity": {
+        "noUselessFragments": "off"
       }
     },
     "includes": [
       "frontend/**/*",
       "!frontend/src/**/*.gen.ts",
-      "!frontend/node_modules/**/*"
+      "!frontend/node_modules/**/*",
+      "!frontend/src/components/ui/**/*"
     ]
   },
   "json": {
@@ -25,6 +35,19 @@
       "allowComments": true,
       "allowTrailingCommas": true
     }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    },
+    "includes": [
+      "frontend/**/*",
+      "!frontend/src/**/*.gen.ts",
+      "!frontend/node_modules/**/*",
+      "!**/dist/*"
+    ]
   },
   "formatter": {
     "indentStyle": "space",
@@ -37,5 +60,8 @@
   },
   "javascript": {
     "jsxRuntime": "transparent"
+  },
+  "files": {
+    "ignoreUnknown": true
   }
 }

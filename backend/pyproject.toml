@@ -1,8 +1,8 @@
 [project]
 name = "blanket"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
-    { name = "Faiz Surani", email = "faiz@faizsurani.com" },
+    { name = "Faiz Surani", email = "faiz@calderapbc.com" },
 ]
 description = "A blanket project"
 classifiers = [
@@ -52,7 +52,7 @@ dev = [
 ]
 
 [project.urls]
-homepage = "https://github.com/ProbablyFaiz/blanket"
+homepage = "https://github.com/calderapbc/blanket"
 
 [project.scripts]
 blanket = "blanket.cli.main:cli"
